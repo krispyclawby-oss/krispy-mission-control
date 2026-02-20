@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Mission Control — 8-Bit Team Preview</title>
+  <style>
+    :root{--bg:#0a1022;--card:#121a34;--line:#2b3a72;--text:#eaf0ff;--muted:#9fb1df;--ok:#35d39e;--warn:#ffbb55;--accent:#7aa2ff}
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 20% -20%,#1a2e63 0,#0a1022 60%);color:var(--text);font-family:Inter,system-ui,Arial}
+    .wrap{max-width:1200px;margin:0 auto;padding:16px;display:grid;gap:14px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+    h1{margin:0 0 4px;font-size:1.4rem} .sub{margin:0;color:var(--muted);font-size:.9rem}
+    .top{display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap}
+    .pill{font-size:.72rem;border:1px solid var(--line);padding:4px 8px;border-radius:999px;color:var(--muted)}
+    .office{position:relative;overflow:hidden;min-height:420px;background:linear-gradient(180deg,#111938,#0c132b);border-radius:12px;border:1px solid #34467f}
+    .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:24px 24px;opacity:.5}
+    .desk,.meeting{position:absolute;background:#20315e;border:2px solid #4f67a9;box-shadow:inset 0 -8px 0 rgba(0,0,0,.18)}
+    .desk{width:160px;height:80px;border-radius:8px}
+    .meeting{width:300px;height:120px;left:50%;top:52%;transform:translate(-50%,-50%);border-radius:18px}
+    .monitor{position:absolute;width:42px;height:28px;background:#18223f;border:2px solid #6487db}
+    .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+    .ok{background:var(--ok)} .warn{background:var(--warn)}
+
+    .avatar{position:absolute;width:38px;height:54px}
+    .head{position:absolute;left:10px;top:0;width:18px;height:18px;background:#ffd9b3;border:2px solid #c88f62}
+    .body{position:absolute;left:6px;top:18px;width:26px;height:20px;background:#7aa2ff;border:2px solid #4d6ac9}
+    .legs{position:absolute;left:8px;top:38px;width:22px;height:14px;background:#25386b;border:2px solid #1a2a51}
+    .tag{position:absolute;left:44px;top:4px;min-width:140px;background:rgba(8,12,26,.86);border:1px solid #405792;border-radius:8px;padding:5px 7px;font-size:.72rem}
+    .tag b{display:block;color:#d7e4ff;font-size:.76rem}
+    .tag small{color:var(--muted)}
+
+    .legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+    .row{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.85rem}
+    a{color:#a9c4ff}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card top">
+      <div>
+        <h1>8-Bit Team Office Preview</h1>
+        <p class="sub">Prototype scene for the lower dashboard section (keeps top ROI modules untouched).</p>
+      </div>
+      <span class="pill">Preview Mode • v0.1</span>
+    </section>
+
+    <section class="card office">
+      <div class="grid"></div>
+
+      <div class="desk" style="left:7%;top:14%"></div>
+      <div class="monitor" style="left:11%;top:17%"></div>
+
+      <div class="desk" style="right:7%;top:14%"></div>
+      <div class="monitor" style="right:12%;top:17%"></div>
+
+      <div class="desk" style="left:7%;bottom:10%"></div>
+      <div class="monitor" style="left:11%;bottom:20%"></div>
+
+      <div class="desk" style="right:7%;bottom:10%"></div>
+      <div class="monitor" style="right:12%;bottom:20%"></div>
+
+      <div class="meeting"></div>
+
+      <div class="avatar" style="left:13%;top:22%"><div class="head"></div><div class="body"></div><div class="legs"></div><div class="tag"><b>Dev</b><small><span class="dot ok"></span> Dashboard UI + data wiring</small></div></div>
+      <div class="avatar" style="right:16%;top:22%"><div class="head"></div><div class="body" style="background:#95a5ff;border-color:#6675d1"></div><div class="legs"></div><div class="tag"><b>Reese</b><small><span class="dot ok"></span> Research / source validation</small></div></div>
+      <div class="avatar" style="left:14%;bottom:18%"><div class="head"></div><div class="body" style="background:#69d7ff;border-color:#3a96b7"></div><div class="legs"></div><div class="tag"><b>Eboy</b><small><span class="dot warn"></span> eBay listing QA passes</small></div></div>
+      <div class="avatar" style="right:15%;bottom:18%"><div class="head"></div><div class="body" style="background:#9fe68f;border-color:#5c9f4f"></div><div class="legs"></div><div class="tag"><b>Quant</b><small><span class="dot ok"></span> ETA + model checks</small></div></div>
+
+      <div class="avatar" style="left:50%;top:49%;transform:translate(-50%,-50%)"><div class="head"></div><div class="body" style="background:#ffc370;border-color:#bd8131"></div><div class="legs"></div><div class="tag"><b>Krispy (Coordinator)</b><small>Routing + priority control at table</small></div></div>
+    </section>
+
+    <section class="card legend">
+      <div class="row"><span class="dot ok"></span> Active / healthy stream</div>
+      <div class="row"><span class="dot warn"></span> Attention needed / in QA</div>
+      <div class="row">Planned placement: below quick-digest in main dashboard</div>
+      <div class="row">Main dashboard: <a href="./">open current</a></div>
+    </section>
+  </main>
+</body>
+</html>
