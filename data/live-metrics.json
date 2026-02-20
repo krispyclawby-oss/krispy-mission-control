@@ -1,0 +1,377 @@
+{
+  "generatedAt": "2026-02-20T07:02:17.773Z",
+  "dataVersion": 1,
+  "confidenceModel": {
+    "high": "Directly measured from first-party artifacts or command output.",
+    "medium": "Derived from reliable proxies (filesystem recency / scan summaries).",
+    "low": "Heuristic estimate or inferred trend requiring human confirmation."
+  },
+  "digest": [
+    {
+      "title": "Gateway Runtime",
+      "value": "Stopped",
+      "delta": "RPC probe healthy",
+      "confidence": "high",
+      "timestamp": "2026-02-20T07:02:17.773Z"
+    },
+    {
+      "title": "Polymarket Backlog",
+      "value": "12 open",
+      "delta": "5/17 closed",
+      "confidence": "high",
+      "timestamp": "2026-02-19T06:02:44.914Z"
+    },
+    {
+      "title": "Active Project Signals",
+      "value": "4/6",
+      "delta": "Projects showing hot/active/stable telemetry",
+      "confidence": "medium",
+      "timestamp": "2026-02-20T07:02:17.773Z"
+    },
+    {
+      "title": "Gateway Last Task Run",
+      "value": "2/19/2026 9:04:17 PM)",
+      "delta": "Windows Scheduled Task telemetry",
+      "confidence": "high",
+      "timestamp": "2026-02-20T07:02:17.773Z"
+    }
+  ],
+  "teamScene": {
+    "title": "8-bit Ops Corner",
+    "subtitle": "Near-real-time context fed by current project telemetry",
+    "members": [
+      {
+        "name": "Boss",
+        "role": "Director",
+        "zone": "Meeting Table",
+        "status": "prioritizing gates",
+        "mood": "focus"
+      },
+      {
+        "name": "Maya",
+        "role": "Ops Lead",
+        "zone": "PC-01",
+        "status": "runbook sequencing",
+        "mood": "calm"
+      },
+      {
+        "name": "Ravi",
+        "role": "Signal Analyst",
+        "zone": "PC-02",
+        "status": "threshold tuning",
+        "mood": "focus"
+      },
+      {
+        "name": "Muse",
+        "role": "Family Support",
+        "zone": "Support Desk",
+        "status": "motivation cadence",
+        "mood": "calm"
+      }
+    ]
+  },
+  "projects": [
+    {
+      "id": "polymarket",
+      "name": "Polymarket Bot",
+      "path": "C:\\Users\\Administrator\\.openclaw\\workspace-dev\\projects\\polymarket",
+      "latestUpdate": "2026-02-19T06:02:51.104Z",
+      "health": "active",
+      "progress": 29,
+      "confidence": "high",
+      "confidenceReason": "Derived from explicit TODO.md checklist state and STATUS.md timestamp.",
+      "timeline": [
+        {
+          "label": "Market scan",
+          "state": "done"
+        },
+        {
+          "label": "Strategy tune",
+          "state": "active"
+        },
+        {
+          "label": "Risk check",
+          "state": "queued"
+        },
+        {
+          "label": "Execution",
+          "state": "queued"
+        }
+      ],
+      "stats": [
+        {
+          "label": "TODO open",
+          "value": "12"
+        },
+        {
+          "label": "TODO done",
+          "value": "5"
+        },
+        {
+          "label": "Checklist total",
+          "value": "17"
+        }
+      ],
+      "actions": [
+        "Close highest-risk open TODO items",
+        "Update STATUS with latest trading constraints",
+        "Re-run dry-run strategy checks"
+      ]
+    },
+    {
+      "id": "mission-control-dashboard",
+      "name": "Mission Control Dashboard",
+      "path": "C:\\Users\\Administrator\\.openclaw\\workspace\\mission-control-dashboard",
+      "latestUpdate": "2026-02-20T07:02:10.953Z",
+      "fileSignals": {
+        "filesScanned": 13,
+        "scanCapped": false
+      },
+      "health": "hot",
+      "progress": 72,
+      "confidence": "medium",
+      "confidenceReason": "Based on filesystem recency proxy (mtime), not semantic task completion.",
+      "timeline": [
+        {
+          "label": "Discovery",
+          "state": "done"
+        },
+        {
+          "label": "Implementation",
+          "state": "active"
+        },
+        {
+          "label": "Validation",
+          "state": "active"
+        },
+        {
+          "label": "Release",
+          "state": "queued"
+        }
+      ],
+      "stats": [
+        {
+          "label": "Progress proxy",
+          "value": "72%"
+        },
+        {
+          "label": "Freshness",
+          "value": "hot"
+        },
+        {
+          "label": "Files scanned",
+          "value": "13"
+        }
+      ],
+      "actions": [
+        "Review latest changed files",
+        "Confirm blockers and owner",
+        "Run smoke validation"
+      ]
+    },
+    {
+      "id": "nightshift",
+      "name": "Nightshift",
+      "path": "C:\\Users\\Administrator\\.openclaw\\workspace\\nightshift",
+      "latestUpdate": "2026-02-20T06:07:01.199Z",
+      "fileSignals": {
+        "filesScanned": 191,
+        "scanCapped": false
+      },
+      "health": "hot",
+      "progress": 72,
+      "confidence": "medium",
+      "confidenceReason": "Based on filesystem recency proxy (mtime), not semantic task completion.",
+      "timeline": [
+        {
+          "label": "Discovery",
+          "state": "done"
+        },
+        {
+          "label": "Implementation",
+          "state": "active"
+        },
+        {
+          "label": "Validation",
+          "state": "active"
+        },
+        {
+          "label": "Release",
+          "state": "queued"
+        }
+      ],
+      "stats": [
+        {
+          "label": "Progress proxy",
+          "value": "72%"
+        },
+        {
+          "label": "Freshness",
+          "value": "hot"
+        },
+        {
+          "label": "Files scanned",
+          "value": "191"
+        }
+      ],
+      "actions": [
+        "Review latest changed files",
+        "Confirm blockers and owner",
+        "Run smoke validation"
+      ]
+    },
+    {
+      "id": "overnight",
+      "name": "Overnight",
+      "path": "C:\\Users\\Administrator\\.openclaw\\workspace\\overnight",
+      "latestUpdate": "2026-02-18T05:22:45.320Z",
+      "fileSignals": {
+        "filesScanned": 1,
+        "scanCapped": false
+      },
+      "health": "cold",
+      "progress": 36,
+      "confidence": "low",
+      "confidenceReason": "Based on filesystem recency proxy (mtime), not semantic task completion.",
+      "timeline": [
+        {
+          "label": "Discovery",
+          "state": "done"
+        },
+        {
+          "label": "Implementation",
+          "state": "queued"
+        },
+        {
+          "label": "Validation",
+          "state": "queued"
+        },
+        {
+          "label": "Release",
+          "state": "queued"
+        }
+      ],
+      "stats": [
+        {
+          "label": "Progress proxy",
+          "value": "36%"
+        },
+        {
+          "label": "Freshness",
+          "value": "cold"
+        },
+        {
+          "label": "Files scanned",
+          "value": "1"
+        }
+      ],
+      "actions": [
+        "Review latest changed files",
+        "Confirm blockers and owner",
+        "Run smoke validation"
+      ]
+    },
+    {
+      "id": "overnight_ops",
+      "name": "Overnight Ops",
+      "path": "C:\\Users\\Administrator\\.openclaw\\workspace\\overnight_ops",
+      "latestUpdate": "2026-02-20T07:00:05.295Z",
+      "fileSignals": {
+        "filesScanned": 304,
+        "scanCapped": false
+      },
+      "health": "hot",
+      "progress": 72,
+      "confidence": "medium",
+      "confidenceReason": "Based on filesystem recency proxy (mtime), not semantic task completion.",
+      "timeline": [
+        {
+          "label": "Discovery",
+          "state": "done"
+        },
+        {
+          "label": "Implementation",
+          "state": "active"
+        },
+        {
+          "label": "Validation",
+          "state": "active"
+        },
+        {
+          "label": "Release",
+          "state": "queued"
+        }
+      ],
+      "stats": [
+        {
+          "label": "Progress proxy",
+          "value": "72%"
+        },
+        {
+          "label": "Freshness",
+          "value": "hot"
+        },
+        {
+          "label": "Files scanned",
+          "value": "304"
+        }
+      ],
+      "actions": [
+        "Review latest changed files",
+        "Confirm blockers and owner",
+        "Run smoke validation"
+      ]
+    },
+    {
+      "id": "papertrades",
+      "name": "Papertrades",
+      "path": "C:\\Users\\Administrator\\.openclaw\\workspace\\papertrades",
+      "latestUpdate": "2026-02-11T22:27:10.875Z",
+      "fileSignals": {
+        "filesScanned": 2,
+        "scanCapped": false
+      },
+      "health": "cold",
+      "progress": 36,
+      "confidence": "low",
+      "confidenceReason": "Based on filesystem recency proxy (mtime), not semantic task completion.",
+      "timeline": [
+        {
+          "label": "Discovery",
+          "state": "done"
+        },
+        {
+          "label": "Implementation",
+          "state": "queued"
+        },
+        {
+          "label": "Validation",
+          "state": "queued"
+        },
+        {
+          "label": "Release",
+          "state": "queued"
+        }
+      ],
+      "stats": [
+        {
+          "label": "Progress proxy",
+          "value": "36%"
+        },
+        {
+          "label": "Freshness",
+          "value": "cold"
+        },
+        {
+          "label": "Files scanned",
+          "value": "2"
+        }
+      ],
+      "actions": [
+        "Review latest changed files",
+        "Confirm blockers and owner",
+        "Run smoke validation"
+      ]
+    }
+  ]
+}

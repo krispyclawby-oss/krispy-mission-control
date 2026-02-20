@@ -1,0 +1,30 @@
+<!doctype html>
+<html><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/><title>Project Detail</title>
+<style>
+:root{--bg:#090f23;--bg2:#18254d;--card:rgba(24,38,83,.72);--line:rgba(136,167,255,.25);--text:#eef4ff;--muted:#9db3dd;--a:#76b8ff;--b:#b289ff}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,system-ui;background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--text)}
+.wrap{max-width:980px;margin:auto;padding:15px;display:grid;gap:12px}.glass{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+a{color:var(--text)}.muted{color:var(--muted)}.bars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.bar{padding:9px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.03)}
+.spark{height:44px;display:flex;align-items:flex-end;gap:4px}.spark i{display:block;flex:1;background:linear-gradient(180deg,var(--a),var(--b));border-radius:4px 4px 2px 2px;opacity:.8}
+.timeline{display:grid;gap:8px}.step{border:1px solid var(--line);padding:9px;border-radius:10px}.done{border-color:#2cc997}.active{border-color:#ffc56a}
+ul{margin:6px 0 0 18px}
+</style></head>
+<body><main class='wrap'>
+<section class='glass'><a href='./index.html'>← Back</a><h1 id='title' style='margin:.4rem 0'></h1><div class='muted' id='meta'></div></section>
+<section class='glass'><h3 style='margin-top:0'>Real-time style infographics (proxy)</h3><div class='bars' id='stats'></div></section>
+<section class='glass'><h3 style='margin-top:0'>Timeline / Roadmap</h3><div class='timeline' id='tl'></div></section>
+<section class='glass'><h3 style='margin-top:0'>Recommended actions</h3><ul id='actions'></ul></section>
+</main>
+<script>
+(async()=>{
+const id=new URLSearchParams(location.search).get('id');
+const data=await (await fetch('./data/live-metrics.json',{cache:'no-store'})).json();
+const p=(data.projects||[]).find(x=>x.id===id)||data.projects?.[0];
+if(!p){document.body.innerHTML='No project data. Run npm run data:refresh';return;}
+document.getElementById('title').textContent=p.name;
+document.getElementById('meta').textContent=`Path: ${p.path} • Updated: ${p.latestUpdate||'n/a'} • Confidence: ${p.confidence} (${p.confidenceReason})`;
+document.getElementById('stats').innerHTML=(p.stats||[]).map(s=>`<div class='bar'><div class='muted' style='font-size:.76rem'>${s.label}</div><div style='font-size:1.2rem;font-weight:800'>${s.value}</div><div class='spark'>${Array.from({length:8}).map((_,i)=>`<i style='height:${22+((i*9+String(s.value).length*7)%22)}px'></i>`).join('')}</div></div>`).join('');
+document.getElementById('tl').innerHTML=(p.timeline||[]).map(t=>`<div class='step ${t.state}'><strong>${t.label}</strong> <span class='muted'>${t.state}</span></div>`).join('');
+document.getElementById('actions').innerHTML=(p.actions||[]).map(a=>`<li>${a}</li>`).join('');
+})();
+</script></body></html>
