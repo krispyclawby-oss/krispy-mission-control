@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mission Control Dashboard v2</title>
-  <meta name="description" content="Premium, static-host-friendly mission control dashboard" />
+  <title>Mission Control Dashboard v3</title>
+  <meta name="description" content="Premium, static-host-friendly mission control dashboard with advanced modules" />
   <style>
     :root {
       --bg: #070b16;
       --bg-elev: #0f172e;
-      --bg-soft: #121d3a;
-      --card: rgba(18, 29, 58, 0.75);
+      --card: rgba(18, 29, 58, 0.74);
       --text: #ecf2ff;
       --muted: #98a9d0;
       --line: rgba(148, 173, 232, 0.2);
@@ -21,12 +20,10 @@
       --bad: #ff6f7f;
       --shadow: 0 18px 50px rgba(4, 8, 20, 0.45);
     }
-
     html[data-theme="light"] {
       --bg: #f4f7ff;
-      --bg-elev: #e9f0ff;
-      --bg-soft: #dbe7ff;
-      --card: rgba(255, 255, 255, 0.85);
+      --bg-elev: #eaf1ff;
+      --card: rgba(255, 255, 255, 0.86);
       --text: #122047;
       --muted: #5f7099;
       --line: rgba(27, 52, 114, 0.18);
@@ -35,7 +32,7 @@
       --good: #109767;
       --warn: #cc7a0f;
       --bad: #d64059;
-      --shadow: 0 16px 35px rgba(41, 73, 139, 0.15);
+      --shadow: 0 16px 35px rgba(41, 73, 139, 0.14);
     }
 
     * { box-sizing: border-box; }
@@ -52,7 +49,7 @@
     }
 
     .container {
-      max-width: 1220px;
+      max-width: 1240px;
       margin: 0 auto;
       padding: 18px 14px 28px;
       display: grid;
@@ -65,8 +62,8 @@
       border: 1px solid var(--line);
       border-radius: 18px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(7px);
-      -webkit-backdrop-filter: blur(7px);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
 
     .topbar {
@@ -75,31 +72,11 @@
       flex-direction: column;
       gap: 12px;
     }
+    .title-wrap h1 { margin: 0; font-size: clamp(1.15rem, 3.8vw, 1.9rem); letter-spacing: .02em; }
+    .title-wrap p { margin: 3px 0 0; color: var(--muted); font-size: .92rem; }
 
-    .title-wrap h1 {
-      margin: 0;
-      font-size: clamp(1.15rem, 3.8vw, 1.9rem);
-      letter-spacing: .02em;
-    }
-
-    .title-wrap p {
-      margin: 3px 0 0;
-      color: var(--muted);
-      font-size: .92rem;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .clock {
-      color: var(--muted);
-      font-size: .86rem;
-    }
-
+    .controls { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+    .clock { color: var(--muted); font-size: .86rem; }
     .btn {
       border: 1px solid var(--line);
       color: var(--text);
@@ -109,17 +86,15 @@
       font-weight: 600;
       font-size: .83rem;
       cursor: pointer;
-      transition: transform .15s ease, border-color .15s ease, opacity .15s ease;
+      transition: transform .15s ease, border-color .15s ease;
     }
     .btn:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
-    .btn:active { transform: translateY(0); }
 
-    .kpi-strip {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 10px;
-    }
+    .section-title { margin: 0; font-size: .92rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 
+    /* First fold quick-digest */
+    .digest { padding: 13px; display: grid; gap: 10px; }
+    .kpi-strip { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
     .kpi {
       padding: 12px;
       border-radius: 14px;
@@ -135,12 +110,7 @@
     .delta.flat { color: var(--warn); }
     .delta.down { color: var(--bad); }
 
-    .status-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
+    .status-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
     .status-card {
       padding: 12px;
       border-radius: 15px;
@@ -150,118 +120,88 @@
       gap: 8px;
       animation: rise .28s ease both;
     }
-
-    .status-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
+    .status-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .status-title { font-size: .86rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
     .status-value { font-size: 1.06rem; font-weight: 700; }
+
     .badge {
       font-size: .7rem;
       font-weight: 700;
       padding: 4px 9px;
       border-radius: 999px;
       border: 1px solid transparent;
+      text-transform: uppercase;
+      letter-spacing: .05em;
     }
     .badge.good { color: var(--good); border-color: color-mix(in srgb, var(--good) 55%, transparent); background: color-mix(in srgb, var(--good) 14%, transparent); }
     .badge.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 60%, transparent); background: color-mix(in srgb, var(--warn) 12%, transparent); }
     .badge.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 60%, transparent); background: color-mix(in srgb, var(--bad) 12%, transparent); }
+    .badge.high { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 60%, transparent); background: color-mix(in srgb, var(--accent) 13%, transparent); }
+    .badge.medium { color: var(--accent-2); border-color: color-mix(in srgb, var(--accent-2) 60%, transparent); background: color-mix(in srgb, var(--accent-2) 13%, transparent); }
+    .badge.low { color: var(--muted); border-color: var(--line); background: color-mix(in srgb, var(--line) 30%, transparent); }
 
     .meter { height: 7px; border-radius: 99px; overflow: hidden; background: color-mix(in srgb, var(--line) 70%, transparent); }
-    .meter > span {
-      display: block;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      transition: width .6s ease;
-    }
+    .meter > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .6s ease; }
 
-    .layout {
-      display: grid;
-      gap: 12px;
-      grid-template-columns: 1fr;
-    }
+    .layout { display: grid; gap: 12px; grid-template-columns: 1fr; }
+    .panel { padding: 13px; display: grid; gap: 10px; }
 
-    .panel {
-      padding: 13px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .panel h2 {
-      margin: 0;
-      font-size: .92rem;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .priority-item, .action-item, .timeline-item {
+    .priority-item, .action-item, .timeline-item, .tracker-item, .eta-item {
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 10px;
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
     }
 
-    .priority-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
+    .priority-row, .tracker-row, .eta-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .priority-tag {
-      font-size: .67rem;
-      padding: 3px 8px;
-      border-radius: 999px;
-      font-weight: 700;
-      color: var(--text);
-      background: color-mix(in srgb, var(--accent) 30%, transparent);
-      border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-      text-transform: uppercase;
-      letter-spacing: .05em;
+      font-size: .67rem; padding: 3px 8px; border-radius: 999px; font-weight: 700;
+      color: var(--text); background: color-mix(in srgb, var(--accent) 30%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); text-transform: uppercase;
     }
 
-    .timeline-item {
-      display: grid;
-      grid-template-columns: 70px 1fr;
-      gap: 10px;
-      align-items: start;
-    }
+    .timeline-item { display: grid; grid-template-columns: 70px 1fr; gap: 10px; align-items: start; }
     .timeline-time { color: var(--muted); font-size: .78rem; font-weight: 600; }
     .timeline-title { font-weight: 700; font-size: .9rem; }
-    .timeline-note { color: var(--muted); font-size: .82rem; margin-top: 3px; }
+    .timeline-note, .small-note { color: var(--muted); font-size: .82rem; margin-top: 3px; }
 
-    .actions {
-      display: grid;
-      gap: 8px;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-    }
-
-    .action-item {
-      text-decoration: none;
-      color: var(--text);
-      display: grid;
-      gap: 4px;
-      transition: border-color .16s ease, transform .16s ease;
-    }
-    .action-item:hover {
-      border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
-      transform: translateY(-1px);
-    }
+    .actions { display: grid; gap: 8px; grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .action-item { text-decoration: none; color: var(--text); display: grid; gap: 4px; transition: border-color .16s ease, transform .16s ease; }
+    .action-item:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); transform: translateY(-1px); }
     .action-label { font-weight: 700; font-size: .86rem; }
     .action-note { color: var(--muted); font-size: .78rem; }
 
-    .footer {
-      color: var(--muted);
-      font-size: .8rem;
-      text-align: center;
-      padding: 4px;
+    /* V3 advanced modules below quick digest */
+    .advanced-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+    .tracker-item strong, .eta-item strong { font-size: .9rem; }
+
+    .eta-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+
+    .team-minimap-wrap { padding: 12px; }
+    .team-minimap {
+      width: 100%;
+      min-height: 230px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01));
+      overflow: hidden;
     }
+    .team-node { fill: color-mix(in srgb, var(--accent) 52%, transparent); stroke: color-mix(in srgb, var(--accent-2) 38%, var(--line)); stroke-width: 1.4; }
+    .team-link { stroke: color-mix(in srgb, var(--line) 80%, transparent); stroke-width: 1.2; }
+    .team-label { fill: var(--text); font-size: 10px; font-weight: 600; }
+
+    .collapsible { display: grid; gap: 8px; }
+    .collapse-toggle { width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+    .collapse-content { overflow: hidden; max-height: 0; opacity: 0; transition: max-height .28s ease, opacity .2s ease; }
+    .collapse-content.open { max-height: 460px; opacity: 1; }
+    .analytics-grid { display: grid; gap: 8px; grid-template-columns: 1fr; padding-top: 2px; }
+    .analytic { border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); }
+    .analytic .spark {
+      height: 7px; border-radius: 999px; margin-top: 6px;
+      background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 35%, transparent), color-mix(in srgb, var(--accent-2) 50%, transparent));
+    }
+
+    .footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 4px; }
 
     @media (min-width: 760px) {
       .container { padding: 22px 18px 30px; gap: 16px; }
@@ -271,12 +211,14 @@
       .status-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .layout { grid-template-columns: 1.1fr 1fr; }
       .panel.main { grid-column: span 2; }
+      .advanced-grid { grid-template-columns: 1fr 1fr; }
+      .panel.wide { grid-column: span 2; }
+      .analytics-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
     }
-
     @keyframes fadeIn { from { opacity: .4; } to { opacity: 1; } }
     @keyframes rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
   </style>
@@ -294,27 +236,57 @@
       </div>
     </header>
 
-    <section class="glass panel">
-      <h2>KPI Strip</h2>
+    <section class="glass digest">
+      <h2 class="section-title">Quick-Digest ROI</h2>
       <div class="kpi-strip" id="kpis"></div>
+      <div class="status-grid" id="statusCards"></div>
     </section>
-
-    <section class="status-grid" id="statusCards"></section>
 
     <section class="layout">
       <article class="glass panel">
-        <h2>Priorities</h2>
+        <h2 class="section-title">Priorities</h2>
         <div id="priorities"></div>
       </article>
 
       <article class="glass panel">
-        <h2>Quick Actions</h2>
+        <h2 class="section-title">Quick Actions</h2>
         <nav class="actions" id="quickActions"></nav>
       </article>
 
       <article class="glass panel main">
-        <h2>Timeline / Activity Feed</h2>
+        <h2 class="section-title">Timeline / Activity Feed</h2>
         <div id="timeline"></div>
+      </article>
+    </section>
+
+    <!-- V3 extra modules below top quick-digest section -->
+    <section class="advanced-grid">
+      <article class="glass panel">
+        <h2 class="section-title">Project Progress Trackers</h2>
+        <div id="projectTrackers"></div>
+      </article>
+
+      <article class="glass panel">
+        <h2 class="section-title">Project ETAs</h2>
+        <div id="etaWidgets"></div>
+      </article>
+
+      <article class="glass panel wide">
+        <h2 class="section-title">Team Minimap / Relationship View</h2>
+        <div class="team-minimap-wrap">
+          <svg class="team-minimap" id="teamMinimap" viewBox="0 0 640 250" role="img" aria-label="Team relationship minimap"></svg>
+          <div class="small-note">Nodes represent owners; links represent active collaboration on tracked projects.</div>
+        </div>
+      </article>
+
+      <article class="glass panel wide collapsible">
+        <button id="analyticsToggle" class="btn collapse-toggle" type="button" aria-expanded="false" aria-controls="analyticsContent">
+          <span>Advanced Analytics</span>
+          <span id="analyticsCaret">▾</span>
+        </button>
+        <div id="analyticsContent" class="collapse-content">
+          <div class="analytics-grid" id="advancedAnalytics"></div>
+        </div>
       </article>
     </section>
 
@@ -323,12 +295,12 @@
 
   <script>
     /**
-     * Dashboard Data Schema (edit this only)
-     * - kpis: top strip metrics
-     * - statuses: operational cards with health + progress
-     * - priorities: ranked focus list
-     * - quickActions: links to important systems
-     * - timeline: recent events/activity feed
+     * Dashboard Data Schema (single-source updates)
+     * - kpis/statuses/priorities/quickActions/timeline: quick-digest + core ops
+     * - projectTrackers: progress bars + status chips
+     * - etas: ETA widgets + confidence labels
+     * - teamMap: node/link graph for collaboration minimap
+     * - analytics: collapsible advanced metrics cards
      */
     const dashboardData = {
       kpis: [
@@ -360,6 +332,41 @@
         { time: '07:10', title: 'Priority alert triggered', note: 'Marketplace conversion dip crossed threshold.' },
         { time: '07:22', title: 'Mitigation deployed', note: 'Fallback listing strategy enabled for critical SKUs.' },
         { time: '07:44', title: 'Performance normalized', note: 'Lead indicators recovering with positive slope.' }
+      ],
+      projectTrackers: [
+        { name: 'Morning Brief Automation', completion: 82, status: 'good', phase: 'Integration' },
+        { name: 'Marketplace Recovery Sprint', completion: 61, status: 'warn', phase: 'Stabilization' },
+        { name: 'Signal Quality Upgrade', completion: 47, status: 'warn', phase: 'Calibration' },
+        { name: 'Ops Dashboard Instrumentation', completion: 94, status: 'good', phase: 'Validation' }
+      ],
+      etas: [
+        { project: 'Brief Automation GA', eta: 'Today 13:30', confidence: 'high', owner: 'Ops' },
+        { project: 'Sync Retry Hotfix', eta: 'Today 16:10', confidence: 'medium', owner: 'Commerce' },
+        { project: 'Alert Threshold Tuning', eta: 'Tomorrow 09:20', confidence: 'medium', owner: 'Quant' },
+        { project: 'Weekend Launch Checklist', eta: 'Tomorrow 12:00', confidence: 'low', owner: 'PM' }
+      ],
+      teamMap: {
+        nodes: [
+          { id: 'Boss', x: 320, y: 35, role: 'Director' },
+          { id: 'Ops', x: 145, y: 115, role: 'Execution' },
+          { id: 'Commerce', x: 495, y: 115, role: 'Marketplace' },
+          { id: 'Quant', x: 235, y: 205, role: 'Analytics' },
+          { id: 'PM', x: 405, y: 205, role: 'Planning' }
+        ],
+        links: [
+          ['Boss', 'Ops'], ['Boss', 'Commerce'], ['Ops', 'Quant'], ['Commerce', 'PM'], ['Quant', 'PM'], ['Ops', 'PM']
+        ],
+        assignments: [
+          'Ops + Quant → Morning Brief Automation',
+          'Commerce + PM → Sync Retry Hotfix',
+          'Boss + PM → Weekend Launch Sequencing'
+        ]
+      },
+      analytics: [
+        { metric: 'Forecast Accuracy (7d)', value: '88.6%', note: '+3.1pp WoW' },
+        { metric: 'Incident Mean Recovery', value: '21m', note: '-4m this cycle' },
+        { metric: 'Automation Coverage', value: '74%', note: '+6% last 2 weeks' },
+        { metric: 'Signal-to-Noise Ratio', value: '3.4x', note: 'High confidence trend' }
       ]
     };
 
@@ -377,13 +384,13 @@
 
     function renderStatuses(items) {
       $('statusCards').innerHTML = items.map((s, idx) => `
-        <article class="status-card glass" style="animation-delay:${idx * 50}ms">
+        <article class="status-card" style="animation-delay:${idx * 55}ms">
           <div class="status-head">
             <div class="status-title">${s.lane}</div>
-            <span class="badge ${s.health}">${s.health.toUpperCase()}</span>
+            <span class="badge ${s.health}">${s.health}</span>
           </div>
           <div class="status-value">${s.state}</div>
-          <div class="meter" aria-label="${s.lane} progress"><span style="width:${Math.max(0, Math.min(100, s.progress))}%"></span></div>
+          <div class="meter"><span style="width:${Math.max(0, Math.min(100, s.progress))}%"></span></div>
         </article>
       `).join('');
     }
@@ -395,7 +402,7 @@
             <strong>${item.title}</strong>
             <span class="priority-tag">${item.priority}</span>
           </div>
-          <div class="timeline-note">Owner: ${item.owner}</div>
+          <div class="small-note">Owner: ${item.owner}</div>
         </div>
       `).join('');
     }
@@ -421,10 +428,77 @@
       `).join('');
     }
 
+    function renderTrackers(items) {
+      $('projectTrackers').innerHTML = items.map(item => `
+        <div class="tracker-item">
+          <div class="tracker-row">
+            <strong>${item.name}</strong>
+            <span class="badge ${item.status}">${item.status}</span>
+          </div>
+          <div class="small-note">Phase: ${item.phase} • ${item.completion}%</div>
+          <div class="meter" aria-label="${item.name} completion"><span style="width:${item.completion}%"></span></div>
+        </div>
+      `).join('');
+    }
+
+    function renderEtas(items) {
+      $('etaWidgets').innerHTML = items.map(item => `
+        <div class="eta-item">
+          <div class="eta-row">
+            <strong>${item.project}</strong>
+            <span class="badge ${item.confidence}">${item.confidence} confidence</span>
+          </div>
+          <div class="eta-meta small-note">ETA: ${item.eta} • Owner: ${item.owner}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderTeamMinimap(map) {
+      const svg = $('teamMinimap');
+      const nodeById = Object.fromEntries(map.nodes.map(n => [n.id, n]));
+      const links = map.links.map(([a, b]) => {
+        const na = nodeById[a], nb = nodeById[b];
+        if (!na || !nb) return '';
+        return `<line class="team-link" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}" />`;
+      }).join('');
+
+      const nodes = map.nodes.map(n => `
+        <g>
+          <circle class="team-node" cx="${n.x}" cy="${n.y}" r="20"></circle>
+          <text class="team-label" x="${n.x}" y="${n.y + 4}" text-anchor="middle">${n.id}</text>
+        </g>
+      `).join('');
+
+      const assignments = map.assignments.map((t, i) => `<text class="team-label" x="16" y="${22 + i * 14}">${t}</text>`).join('');
+      svg.innerHTML = `${links}${nodes}<g opacity="0.9">${assignments}</g>`;
+    }
+
+    function renderAnalytics(items) {
+      $('advancedAnalytics').innerHTML = items.map(item => `
+        <div class="analytic">
+          <div class="small-note">${item.metric}</div>
+          <strong>${item.value}</strong>
+          <div class="small-note">${item.note}</div>
+          <div class="spark"></div>
+        </div>
+      `).join('');
+    }
+
+    function setupAnalyticsCollapse() {
+      const btn = $('analyticsToggle');
+      const content = $('analyticsContent');
+      const caret = $('analyticsCaret');
+      btn.addEventListener('click', () => {
+        const open = content.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(open));
+        caret.textContent = open ? '▴' : '▾';
+      });
+    }
+
     function updateClock() {
       const now = new Date();
       $('clock').textContent = `Updated ${now.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}`;
-      $('footerMeta').textContent = `Mission Control v2 • Static deploy ready (GitHub Pages / Vercel) • ${now.toLocaleTimeString()}`;
+      $('footerMeta').textContent = `Mission Control v3 • Static deploy ready (GitHub Pages / Vercel) • ${now.toLocaleTimeString()}`;
     }
 
     function setupThemeToggle() {
@@ -432,7 +506,6 @@
       const html = document.documentElement;
       const saved = localStorage.getItem(key);
       if (saved === 'light' || saved === 'dark') html.setAttribute('data-theme', saved);
-
       $('themeToggle').addEventListener('click', () => {
         const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         html.setAttribute('data-theme', next);
@@ -446,6 +519,11 @@
       renderPriorities(dashboardData.priorities);
       renderActions(dashboardData.quickActions);
       renderTimeline(dashboardData.timeline);
+      renderTrackers(dashboardData.projectTrackers);
+      renderEtas(dashboardData.etas);
+      renderTeamMinimap(dashboardData.teamMap);
+      renderAnalytics(dashboardData.analytics);
+      setupAnalyticsCollapse();
       setupThemeToggle();
       updateClock();
       setInterval(updateClock, 60000);
