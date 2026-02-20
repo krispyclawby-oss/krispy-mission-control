@@ -1,0 +1,77 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boss Mission Control</title>
+  <style>
+    :root{--bg:#0b1020;--card:#141b34;--text:#e8ecff;--muted:#a8b3d6;--good:#22c55e;--warn:#f59e0b;--bad:#ef4444;}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:linear-gradient(180deg,#0b1020,#0f1630);color:var(--text)}
+    .wrap{max-width:1100px;margin:0 auto;padding:20px}
+    h1{margin:0 0 8px;font-size:28px} .sub{color:var(--muted);margin:0 0 18px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+    .card{background:var(--card);border:1px solid #23305f;border-radius:14px;padding:14px}
+    .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .v{font-size:26px;font-weight:700;margin-top:6px}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600}
+    .good{background:#12331f;color:#8ef0b1}.warn{background:#3a2a10;color:#ffd08a}.bad{background:#3a1212;color:#ff9e9e}
+    .row{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .list{margin:0;padding-left:18px;color:#d7defa}
+    .foot{margin-top:18px;color:var(--muted);font-size:12px}
+    a{color:#9ac6ff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🔥 Boss Mission Control</h1>
+    <p class="sub">Always-on snapshot for ops, execution lanes, and today’s priorities.</p>
+
+    <div class="grid" id="stats"></div>
+
+    <div class="grid" style="margin-top:14px;">
+      <div class="card">
+        <div class="row"><div class="k">Top Priorities</div><span class="pill warn">Live list</span></div>
+        <ul class="list" id="priorities"></ul>
+      </div>
+      <div class="card">
+        <div class="row"><div class="k">Update Cadence</div><span class="pill good">Auto</span></div>
+        <ul class="list">
+          <li>Push changes to GitHub</li>
+          <li>Vercel auto-deploys</li>
+          <li>Open this URL anywhere</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot" id="foot"></div>
+  </div>
+
+<script>
+const state = {
+  metrics: [
+    {label:'Squeeze Monitor', value:'ACTIVE', status:'good'},
+    {label:'Overnight Ops', value:'ON TRACK', status:'good'},
+    {label:'eBay Lane', value:'IMPROVING', status:'warn'},
+    {label:'Quant Lane', value:'RUNNING', status:'good'}
+  ],
+  priorities: [
+    'Morning Brief redesign upgrade (tomorrow format)',
+    'eBay troubleshooting runbook integration',
+    'Prismatic Surprise Boxes dip watch',
+    'Mission Control v2: add real data hooks'
+  ]
+};
+
+const stats = document.getElementById('stats');
+state.metrics.forEach(m=>{
+  const c=document.createElement('div'); c.className='card';
+  c.innerHTML=`<div class="row"><div class="k">${m.label}</div><span class="pill ${m.status}">${m.status.toUpperCase()}</span></div><div class="v">${m.value}</div>`;
+  stats.appendChild(c);
+});
+const pr=document.getElementById('priorities');
+state.priorities.forEach(p=>{const li=document.createElement('li'); li.textContent=p; pr.appendChild(li);});
+const now=new Date();
+document.getElementById('foot').textContent = `Last refreshed: ${now.toLocaleString()} • Deployed on Vercel`;
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+﻿{
+  "name": "mission-control-dashboard",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Boss mission control static dashboard",
+  "scripts": {
+    "start": "npx serve ."
+  }
+}
