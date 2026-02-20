@@ -1,77 +1,457 @@
-﻿<!doctype html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Boss Mission Control</title>
+  <title>Mission Control Dashboard v2</title>
+  <meta name="description" content="Premium, static-host-friendly mission control dashboard" />
   <style>
-    :root{--bg:#0b1020;--card:#141b34;--text:#e8ecff;--muted:#a8b3d6;--good:#22c55e;--warn:#f59e0b;--bad:#ef4444;}
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:linear-gradient(180deg,#0b1020,#0f1630);color:var(--text)}
-    .wrap{max-width:1100px;margin:0 auto;padding:20px}
-    h1{margin:0 0 8px;font-size:28px} .sub{color:var(--muted);margin:0 0 18px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-    .card{background:var(--card);border:1px solid #23305f;border-radius:14px;padding:14px}
-    .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-    .v{font-size:26px;font-weight:700;margin-top:6px}
-    .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600}
-    .good{background:#12331f;color:#8ef0b1}.warn{background:#3a2a10;color:#ffd08a}.bad{background:#3a1212;color:#ff9e9e}
-    .row{display:flex;gap:10px;align-items:center;justify-content:space-between}
-    .list{margin:0;padding-left:18px;color:#d7defa}
-    .foot{margin-top:18px;color:var(--muted);font-size:12px}
-    a{color:#9ac6ff}
+    :root {
+      --bg: #070b16;
+      --bg-elev: #0f172e;
+      --bg-soft: #121d3a;
+      --card: rgba(18, 29, 58, 0.75);
+      --text: #ecf2ff;
+      --muted: #98a9d0;
+      --line: rgba(148, 173, 232, 0.2);
+      --accent: #5ea0ff;
+      --accent-2: #8a7bff;
+      --good: #33d69f;
+      --warn: #ffb247;
+      --bad: #ff6f7f;
+      --shadow: 0 18px 50px rgba(4, 8, 20, 0.45);
+    }
+
+    html[data-theme="light"] {
+      --bg: #f4f7ff;
+      --bg-elev: #e9f0ff;
+      --bg-soft: #dbe7ff;
+      --card: rgba(255, 255, 255, 0.85);
+      --text: #122047;
+      --muted: #5f7099;
+      --line: rgba(27, 52, 114, 0.18);
+      --accent: #245ee9;
+      --accent-2: #5d45df;
+      --good: #109767;
+      --warn: #cc7a0f;
+      --bad: #d64059;
+      --shadow: 0 16px 35px rgba(41, 73, 139, 0.15);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1300px 500px at 20% -10%, rgba(94,160,255,.22), transparent 60%),
+        radial-gradient(1000px 500px at 95% -20%, rgba(138,123,255,.18), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+
+    .container {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 18px 14px 28px;
+      display: grid;
+      gap: 14px;
+      animation: fadeIn .35s ease;
+    }
+
+    .glass {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+    }
+
+    .topbar {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .title-wrap h1 {
+      margin: 0;
+      font-size: clamp(1.15rem, 3.8vw, 1.9rem);
+      letter-spacing: .02em;
+    }
+
+    .title-wrap p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .clock {
+      color: var(--muted);
+      font-size: .86rem;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-weight: 600;
+      font-size: .83rem;
+      cursor: pointer;
+      transition: transform .15s ease, border-color .15s ease, opacity .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+    .btn:active { transform: translateY(0); }
+
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .kpi {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
+      transition: transform .2s ease;
+    }
+    .kpi:hover { transform: translateY(-2px); }
+    .kpi .label { color: var(--muted); font-size: .77rem; text-transform: uppercase; letter-spacing: .08em; }
+    .kpi .value { font-size: 1.22rem; font-weight: 700; margin-top: 6px; }
+    .kpi .delta { font-size: .76rem; margin-top: 2px; }
+    .delta.up { color: var(--good); }
+    .delta.flat { color: var(--warn); }
+    .delta.down { color: var(--bad); }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .status-card {
+      padding: 12px;
+      border-radius: 15px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.01));
+      display: grid;
+      gap: 8px;
+      animation: rise .28s ease both;
+    }
+
+    .status-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-title { font-size: .86rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .status-value { font-size: 1.06rem; font-weight: 700; }
+    .badge {
+      font-size: .7rem;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+    .badge.good { color: var(--good); border-color: color-mix(in srgb, var(--good) 55%, transparent); background: color-mix(in srgb, var(--good) 14%, transparent); }
+    .badge.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 60%, transparent); background: color-mix(in srgb, var(--warn) 12%, transparent); }
+    .badge.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 60%, transparent); background: color-mix(in srgb, var(--bad) 12%, transparent); }
+
+    .meter { height: 7px; border-radius: 99px; overflow: hidden; background: color-mix(in srgb, var(--line) 70%, transparent); }
+    .meter > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width .6s ease;
+    }
+
+    .layout {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+    }
+
+    .panel {
+      padding: 13px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: .92rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .priority-item, .action-item, .timeline-item {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
+    }
+
+    .priority-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .priority-tag {
+      font-size: .67rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      color: var(--text);
+      background: color-mix(in srgb, var(--accent) 30%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+    .timeline-time { color: var(--muted); font-size: .78rem; font-weight: 600; }
+    .timeline-title { font-weight: 700; font-size: .9rem; }
+    .timeline-note { color: var(--muted); font-size: .82rem; margin-top: 3px; }
+
+    .actions {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+
+    .action-item {
+      text-decoration: none;
+      color: var(--text);
+      display: grid;
+      gap: 4px;
+      transition: border-color .16s ease, transform .16s ease;
+    }
+    .action-item:hover {
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+      transform: translateY(-1px);
+    }
+    .action-label { font-weight: 700; font-size: .86rem; }
+    .action-note { color: var(--muted); font-size: .78rem; }
+
+    .footer {
+      color: var(--muted);
+      font-size: .8rem;
+      text-align: center;
+      padding: 4px;
+    }
+
+    @media (min-width: 760px) {
+      .container { padding: 22px 18px 30px; gap: 16px; }
+      .topbar { flex-direction: row; justify-content: space-between; align-items: center; }
+      .controls { width: auto; min-width: 255px; }
+      .kpi-strip { grid-template-columns: repeat(4, minmax(0,1fr)); }
+      .status-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .layout { grid-template-columns: 1.1fr 1fr; }
+      .panel.main { grid-column: span 2; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    @keyframes fadeIn { from { opacity: .4; } to { opacity: 1; } }
+    @keyframes rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>🔥 Boss Mission Control</h1>
-    <p class="sub">Always-on snapshot for ops, execution lanes, and today’s priorities.</p>
-
-    <div class="grid" id="stats"></div>
-
-    <div class="grid" style="margin-top:14px;">
-      <div class="card">
-        <div class="row"><div class="k">Top Priorities</div><span class="pill warn">Live list</span></div>
-        <ul class="list" id="priorities"></ul>
+  <main class="container">
+    <header class="topbar glass">
+      <div class="title-wrap">
+        <h1>Mission Control</h1>
+        <p>Premium operational view for execution, priorities, and momentum.</p>
       </div>
-      <div class="card">
-        <div class="row"><div class="k">Update Cadence</div><span class="pill good">Auto</span></div>
-        <ul class="list">
-          <li>Push changes to GitHub</li>
-          <li>Vercel auto-deploys</li>
-          <li>Open this URL anywhere</li>
-        </ul>
+      <div class="controls">
+        <div class="clock" id="clock"></div>
+        <button class="btn" id="themeToggle" type="button" aria-label="Toggle light and dark theme">Switch theme</button>
       </div>
-    </div>
+    </header>
 
-    <div class="foot" id="foot"></div>
-  </div>
+    <section class="glass panel">
+      <h2>KPI Strip</h2>
+      <div class="kpi-strip" id="kpis"></div>
+    </section>
 
-<script>
-const state = {
-  metrics: [
-    {label:'Squeeze Monitor', value:'ACTIVE', status:'good'},
-    {label:'Overnight Ops', value:'ON TRACK', status:'good'},
-    {label:'eBay Lane', value:'IMPROVING', status:'warn'},
-    {label:'Quant Lane', value:'RUNNING', status:'good'}
-  ],
-  priorities: [
-    'Morning Brief redesign upgrade (tomorrow format)',
-    'eBay troubleshooting runbook integration',
-    'Prismatic Surprise Boxes dip watch',
-    'Mission Control v2: add real data hooks'
-  ]
-};
+    <section class="status-grid" id="statusCards"></section>
 
-const stats = document.getElementById('stats');
-state.metrics.forEach(m=>{
-  const c=document.createElement('div'); c.className='card';
-  c.innerHTML=`<div class="row"><div class="k">${m.label}</div><span class="pill ${m.status}">${m.status.toUpperCase()}</span></div><div class="v">${m.value}</div>`;
-  stats.appendChild(c);
-});
-const pr=document.getElementById('priorities');
-state.priorities.forEach(p=>{const li=document.createElement('li'); li.textContent=p; pr.appendChild(li);});
-const now=new Date();
-document.getElementById('foot').textContent = `Last refreshed: ${now.toLocaleString()} • Deployed on Vercel`;
-</script>
+    <section class="layout">
+      <article class="glass panel">
+        <h2>Priorities</h2>
+        <div id="priorities"></div>
+      </article>
+
+      <article class="glass panel">
+        <h2>Quick Actions</h2>
+        <nav class="actions" id="quickActions"></nav>
+      </article>
+
+      <article class="glass panel main">
+        <h2>Timeline / Activity Feed</h2>
+        <div id="timeline"></div>
+      </article>
+    </section>
+
+    <footer class="footer" id="footerMeta"></footer>
+  </main>
+
+  <script>
+    /**
+     * Dashboard Data Schema (edit this only)
+     * - kpis: top strip metrics
+     * - statuses: operational cards with health + progress
+     * - priorities: ranked focus list
+     * - quickActions: links to important systems
+     * - timeline: recent events/activity feed
+     */
+    const dashboardData = {
+      kpis: [
+        { label: 'Execution Velocity', value: '92%', delta: '+8% vs last cycle', trend: 'up' },
+        { label: 'Open Critical Items', value: '3', delta: 'Flat in 24h', trend: 'flat' },
+        { label: 'Automation Uptime', value: '99.2%', delta: '+0.4% this week', trend: 'up' },
+        { label: 'Decision SLA', value: '26m', delta: '-6m average', trend: 'up' }
+      ],
+      statuses: [
+        { lane: 'Overnight Ops', state: 'On Track', health: 'good', progress: 86 },
+        { lane: 'Data Pipeline', state: 'Stable', health: 'good', progress: 91 },
+        { lane: 'Marketplace Lane', state: 'Needs Attention', health: 'warn', progress: 58 },
+        { lane: 'Research Queue', state: 'Blocked Item', health: 'bad', progress: 34 }
+      ],
+      priorities: [
+        { title: 'Finalize morning brief v2 formatting', owner: 'Ops', priority: 'P1' },
+        { title: 'Resolve listing sync retries', owner: 'Commerce', priority: 'P1' },
+        { title: 'Tune watchlist alert thresholds', owner: 'Quant', priority: 'P2' },
+        { title: 'Prepare launch checklist for weekend run', owner: 'PM', priority: 'P3' }
+      ],
+      quickActions: [
+        { label: 'Open Runbook', note: 'Incident and recovery SOP', href: '#' },
+        { label: 'Review Alerts', note: 'High signal queue', href: '#' },
+        { label: 'Push Status Update', note: 'Broadcast latest snapshot', href: '#' },
+        { label: 'Plan Today', note: 'Focus + sequencing', href: '#' }
+      ],
+      timeline: [
+        { time: '06:45', title: 'Nightly reconciliation complete', note: '0 mismatch records across monitored lanes.' },
+        { time: '07:10', title: 'Priority alert triggered', note: 'Marketplace conversion dip crossed threshold.' },
+        { time: '07:22', title: 'Mitigation deployed', note: 'Fallback listing strategy enabled for critical SKUs.' },
+        { time: '07:44', title: 'Performance normalized', note: 'Lead indicators recovering with positive slope.' }
+      ]
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    function renderKpis(items) {
+      $('kpis').innerHTML = items.map(item => `
+        <div class="kpi">
+          <div class="label">${item.label}</div>
+          <div class="value">${item.value}</div>
+          <div class="delta ${item.trend}">${item.delta}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderStatuses(items) {
+      $('statusCards').innerHTML = items.map((s, idx) => `
+        <article class="status-card glass" style="animation-delay:${idx * 50}ms">
+          <div class="status-head">
+            <div class="status-title">${s.lane}</div>
+            <span class="badge ${s.health}">${s.health.toUpperCase()}</span>
+          </div>
+          <div class="status-value">${s.state}</div>
+          <div class="meter" aria-label="${s.lane} progress"><span style="width:${Math.max(0, Math.min(100, s.progress))}%"></span></div>
+        </article>
+      `).join('');
+    }
+
+    function renderPriorities(items) {
+      $('priorities').innerHTML = items.map(item => `
+        <div class="priority-item">
+          <div class="priority-row">
+            <strong>${item.title}</strong>
+            <span class="priority-tag">${item.priority}</span>
+          </div>
+          <div class="timeline-note">Owner: ${item.owner}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderActions(items) {
+      $('quickActions').innerHTML = items.map(item => `
+        <a class="action-item" href="${item.href}" target="_self" rel="noopener">
+          <span class="action-label">${item.label}</span>
+          <span class="action-note">${item.note}</span>
+        </a>
+      `).join('');
+    }
+
+    function renderTimeline(items) {
+      $('timeline').innerHTML = items.map(item => `
+        <div class="timeline-item">
+          <div class="timeline-time">${item.time}</div>
+          <div>
+            <div class="timeline-title">${item.title}</div>
+            <div class="timeline-note">${item.note}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateClock() {
+      const now = new Date();
+      $('clock').textContent = `Updated ${now.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}`;
+      $('footerMeta').textContent = `Mission Control v2 • Static deploy ready (GitHub Pages / Vercel) • ${now.toLocaleTimeString()}`;
+    }
+
+    function setupThemeToggle() {
+      const key = 'mission-control-theme';
+      const html = document.documentElement;
+      const saved = localStorage.getItem(key);
+      if (saved === 'light' || saved === 'dark') html.setAttribute('data-theme', saved);
+
+      $('themeToggle').addEventListener('click', () => {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem(key, next);
+      });
+    }
+
+    function boot() {
+      renderKpis(dashboardData.kpis);
+      renderStatuses(dashboardData.statuses);
+      renderPriorities(dashboardData.priorities);
+      renderActions(dashboardData.quickActions);
+      renderTimeline(dashboardData.timeline);
+      setupThemeToggle();
+      updateClock();
+      setInterval(updateClock, 60000);
+    }
+
+    boot();
+  </script>
 </body>
 </html>
