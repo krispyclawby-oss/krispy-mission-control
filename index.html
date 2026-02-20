@@ -1,62 +1,69 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-anim="normal">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mission Control Dashboard v3</title>
-  <meta name="description" content="Premium, static-host-friendly mission control dashboard with advanced modules" />
+  <title>Mission Control • Team Live Scene v4 Preview</title>
+  <meta name="description" content="High-resolution animated team live scene preview for mission-control dashboard." />
   <style>
     :root {
-      --bg: #070b16;
-      --bg-elev: #0f172e;
-      --card: rgba(18, 29, 58, 0.74);
-      --text: #ecf2ff;
-      --muted: #98a9d0;
-      --line: rgba(148, 173, 232, 0.2);
-      --accent: #5ea0ff;
-      --accent-2: #8a7bff;
-      --good: #33d69f;
-      --warn: #ffb247;
-      --bad: #ff6f7f;
-      --shadow: 0 18px 50px rgba(4, 8, 20, 0.45);
+      --bg: #050a18;
+      --bg-2: #0b1430;
+      --card: rgba(16, 30, 64, 0.78);
+      --line: rgba(140, 173, 255, 0.22);
+      --text: #edf3ff;
+      --muted: #9db0da;
+      --accent: #67b1ff;
+      --accent-2: #9f7dff;
+      --good: #31d8a5;
+      --warn: #ffbc5f;
+      --bad: #ff6e82;
+      --shadow: 0 20px 48px rgba(0, 0, 0, .45);
+      --ambient-speed: 11s;
+      --pulse-speed: 2.4s;
+      --bob-speed: 4.6s;
+      --float-speed: 8.5s;
+    }
+    html[data-anim="low"] {
+      --ambient-speed: 16s;
+      --pulse-speed: 3.6s;
+      --bob-speed: 7s;
+      --float-speed: 12s;
+    }
+    html[data-anim="high"] {
+      --ambient-speed: 8s;
+      --pulse-speed: 1.5s;
+      --bob-speed: 3.2s;
+      --float-speed: 6s;
     }
     html[data-theme="light"] {
-      --bg: #f4f7ff;
-      --bg-elev: #eaf1ff;
-      --card: rgba(255, 255, 255, 0.86);
-      --text: #122047;
-      --muted: #5f7099;
-      --line: rgba(27, 52, 114, 0.18);
-      --accent: #245ee9;
-      --accent-2: #5d45df;
-      --good: #109767;
+      --bg: #edf2ff;
+      --bg-2: #dce7ff;
+      --card: rgba(255, 255, 255, 0.82);
+      --line: rgba(44, 79, 160, 0.22);
+      --text: #142245;
+      --muted: #54668f;
+      --accent: #2b65ea;
+      --accent-2: #634ce8;
+      --good: #0ea579;
       --warn: #cc7a0f;
-      --bad: #d64059;
-      --shadow: 0 16px 35px rgba(41, 73, 139, 0.14);
+      --bad: #d24460;
+      --shadow: 0 14px 34px rgba(39, 72, 145, .2);
     }
 
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(1300px 500px at 20% -10%, rgba(94,160,255,.22), transparent 60%),
-        radial-gradient(1000px 500px at 95% -20%, rgba(138,123,255,.18), transparent 60%),
-        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
       color: var(--text);
+      background:
+        radial-gradient(1400px 700px at -10% -20%, rgba(91, 149, 255, .24), transparent 58%),
+        radial-gradient(1000px 600px at 110% -30%, rgba(159, 125, 255, .2), transparent 55%),
+        linear-gradient(160deg, var(--bg), var(--bg-2));
       min-height: 100vh;
-      line-height: 1.45;
     }
 
-    .container {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 18px 14px 28px;
-      display: grid;
-      gap: 14px;
-      animation: fadeIn .35s ease;
-    }
-
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 18px 14px 28px; display: grid; gap: 12px; }
     .glass {
       background: var(--card);
       border: 1px solid var(--line);
@@ -66,470 +73,379 @@
       -webkit-backdrop-filter: blur(8px);
     }
 
-    .topbar {
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .title-wrap h1 { margin: 0; font-size: clamp(1.15rem, 3.8vw, 1.9rem); letter-spacing: .02em; }
-    .title-wrap p { margin: 3px 0 0; color: var(--muted); font-size: .92rem; }
-
-    .controls { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
-    .clock { color: var(--muted); font-size: .86rem; }
-    .btn {
+    .topbar { padding: 14px; display: grid; gap: 12px; }
+    .head { display: flex; justify-content: space-between; gap: 10px; align-items: start; flex-wrap: wrap; }
+    h1 { margin: 0; font-size: clamp(1.16rem, 3.7vw, 2rem); }
+    .sub { margin: 4px 0 0; color: var(--muted); font-size: .92rem; }
+    .links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .link, .btn {
       border: 1px solid var(--line);
       color: var(--text);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      text-decoration: none;
+      background: linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.03));
       border-radius: 12px;
-      padding: 9px 12px;
-      font-weight: 600;
-      font-size: .83rem;
+      padding: 8px 11px;
+      font-size: .8rem;
+      font-weight: 650;
       cursor: pointer;
-      transition: transform .15s ease, border-color .15s ease;
     }
-    .btn:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+    .control { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .chips { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 3px; }
+    .chip {
+      border: 0; border-radius: 999px; padding: 7px 10px; cursor: pointer;
+      color: var(--muted); background: transparent; font-size: .77rem; font-weight: 700;
+    }
+    .chip.active { color: var(--text); background: linear-gradient(180deg, rgba(103,177,255,.28), rgba(159,125,255,.18)); }
 
-    .section-title { margin: 0; font-size: .92rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-
-    /* First fold quick-digest */
-    .digest { padding: 13px; display: grid; gap: 10px; }
-    .kpi-strip { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
-    .kpi {
-      padding: 12px;
-      border-radius: 14px;
+    .scene-wrap { padding: 12px; display: grid; gap: 12px; }
+    .scene {
+      min-height: 520px;
+      border-radius: 16px;
       border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
-      transition: transform .2s ease;
-    }
-    .kpi:hover { transform: translateY(-2px); }
-    .kpi .label { color: var(--muted); font-size: .77rem; text-transform: uppercase; letter-spacing: .08em; }
-    .kpi .value { font-size: 1.22rem; font-weight: 700; margin-top: 6px; }
-    .kpi .delta { font-size: .76rem; margin-top: 2px; }
-    .delta.up { color: var(--good); }
-    .delta.flat { color: var(--warn); }
-    .delta.down { color: var(--bad); }
-
-    .status-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-    .status-card {
-      padding: 12px;
-      border-radius: 15px;
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.01));
-      display: grid;
-      gap: 8px;
-      animation: rise .28s ease both;
-    }
-    .status-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .status-title { font-size: .86rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
-    .status-value { font-size: 1.06rem; font-weight: 700; }
-
-    .badge {
-      font-size: .7rem;
-      font-weight: 700;
-      padding: 4px 9px;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-    }
-    .badge.good { color: var(--good); border-color: color-mix(in srgb, var(--good) 55%, transparent); background: color-mix(in srgb, var(--good) 14%, transparent); }
-    .badge.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 60%, transparent); background: color-mix(in srgb, var(--warn) 12%, transparent); }
-    .badge.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 60%, transparent); background: color-mix(in srgb, var(--bad) 12%, transparent); }
-    .badge.high { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 60%, transparent); background: color-mix(in srgb, var(--accent) 13%, transparent); }
-    .badge.medium { color: var(--accent-2); border-color: color-mix(in srgb, var(--accent-2) 60%, transparent); background: color-mix(in srgb, var(--accent-2) 13%, transparent); }
-    .badge.low { color: var(--muted); border-color: var(--line); background: color-mix(in srgb, var(--line) 30%, transparent); }
-
-    .meter { height: 7px; border-radius: 99px; overflow: hidden; background: color-mix(in srgb, var(--line) 70%, transparent); }
-    .meter > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .6s ease; }
-
-    .layout { display: grid; gap: 12px; grid-template-columns: 1fr; }
-    .panel { padding: 13px; display: grid; gap: 10px; }
-
-    .priority-item, .action-item, .timeline-item, .tracker-item, .eta-item {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
-    }
-
-    .priority-row, .tracker-row, .eta-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .priority-tag {
-      font-size: .67rem; padding: 3px 8px; border-radius: 999px; font-weight: 700;
-      color: var(--text); background: color-mix(in srgb, var(--accent) 30%, transparent);
-      border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); text-transform: uppercase;
-    }
-
-    .timeline-item { display: grid; grid-template-columns: 70px 1fr; gap: 10px; align-items: start; }
-    .timeline-time { color: var(--muted); font-size: .78rem; font-weight: 600; }
-    .timeline-title { font-weight: 700; font-size: .9rem; }
-    .timeline-note, .small-note { color: var(--muted); font-size: .82rem; margin-top: 3px; }
-
-    .actions { display: grid; gap: 8px; grid-template-columns: repeat(2,minmax(0,1fr)); }
-    .action-item { text-decoration: none; color: var(--text); display: grid; gap: 4px; transition: border-color .16s ease, transform .16s ease; }
-    .action-item:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); transform: translateY(-1px); }
-    .action-label { font-weight: 700; font-size: .86rem; }
-    .action-note { color: var(--muted); font-size: .78rem; }
-
-    /* V3 advanced modules below quick digest */
-    .advanced-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
-    .tracker-item strong, .eta-item strong { font-size: .9rem; }
-
-    .eta-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
-
-    .team-minimap-wrap { padding: 12px; }
-    .team-minimap {
-      width: 100%;
-      min-height: 230px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01));
+      background:
+        radial-gradient(circle at 12% 14%, rgba(103,177,255,.24), transparent 24%),
+        radial-gradient(circle at 87% 22%, rgba(159,125,255,.24), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
       overflow: hidden;
-    }
-    .team-node { fill: color-mix(in srgb, var(--accent) 52%, transparent); stroke: color-mix(in srgb, var(--accent-2) 38%, var(--line)); stroke-width: 1.4; }
-    .team-link { stroke: color-mix(in srgb, var(--line) 80%, transparent); stroke-width: 1.2; }
-    .team-label { fill: var(--text); font-size: 10px; font-weight: 600; }
-
-    .collapsible { display: grid; gap: 8px; }
-    .collapse-toggle { width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-    .collapse-content { overflow: hidden; max-height: 0; opacity: 0; transition: max-height .28s ease, opacity .2s ease; }
-    .collapse-content.open { max-height: 460px; opacity: 1; }
-    .analytics-grid { display: grid; gap: 8px; grid-template-columns: 1fr; padding-top: 2px; }
-    .analytic { border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); }
-    .analytic .spark {
-      height: 7px; border-radius: 999px; margin-top: 6px;
-      background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 35%, transparent), color-mix(in srgb, var(--accent-2) 50%, transparent));
+      position: relative;
     }
 
-    .footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 4px; }
+    .ambient, .ambient::before, .ambient::after {
+      position: absolute; inset: -20% -5%; content: ""; pointer-events: none;
+      background: conic-gradient(from 20deg, transparent 0 50deg, rgba(103,177,255,.16) 90deg, transparent 130deg 230deg, rgba(159,125,255,.16) 255deg, transparent 300deg);
+      filter: blur(30px);
+      opacity: .7;
+      animation: rotate var(--ambient-speed) linear infinite;
+    }
+    .ambient::before { animation-direction: reverse; opacity: .5; transform: scale(1.2); }
+    .ambient::after { opacity: .25; transform: scale(1.35); }
 
-    @media (min-width: 760px) {
-      .container { padding: 22px 18px 30px; gap: 16px; }
-      .topbar { flex-direction: row; justify-content: space-between; align-items: center; }
-      .controls { width: auto; min-width: 255px; }
-      .kpi-strip { grid-template-columns: repeat(4, minmax(0,1fr)); }
-      .status-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
-      .layout { grid-template-columns: 1.1fr 1fr; }
-      .panel.main { grid-column: span 2; }
-      .advanced-grid { grid-template-columns: 1fr 1fr; }
-      .panel.wide { grid-column: span 2; }
-      .analytics-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .map {
+      position: absolute; inset: 14px;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      gap: 10px;
+    }
+
+    .zone {
+      border: 1px dashed color-mix(in srgb, var(--line) 80%, transparent);
+      border-radius: 14px;
+      padding: 8px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.01));
+      transition: border-color .2s ease, transform .2s ease;
+    }
+    .zone:hover { border-color: color-mix(in srgb, var(--accent) 70%, var(--line)); transform: translateY(-2px); }
+    .zone-title { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+    .pulse {
+      position: absolute; right: 10px; top: 10px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--good); box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);
+      animation: pulse var(--pulse-speed) infinite;
+    }
+
+    .avatar {
+      width: 58px; aspect-ratio: 1; border-radius: 16px;
+      display: grid; place-items: center; font-size: 1.3rem;
+      background: linear-gradient(150deg, rgba(103,177,255,.45), rgba(159,125,255,.35));
+      border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--line));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 9px 18px rgba(0,0,0,.25);
+      animation: bob var(--bob-speed) ease-in-out infinite;
+    }
+
+    .team-grid { position: absolute; inset: 54px 10px 10px; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(188px, 1fr)); align-content: start; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 8px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.02));
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      min-height: 90px;
+    }
+    .card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+    }
+    .glow {
+      position: absolute; inset: -40% 55% auto -30%; height: 120px;
+      background: radial-gradient(circle at center, rgba(255,255,255,.28), transparent 62%);
+      animation: sweep var(--float-speed) linear infinite;
+      pointer-events: none;
+    }
+
+    .name { margin: 0; font-size: .86rem; font-weight: 800; }
+    .role { color: var(--muted); font-size: .73rem; margin-top: 1px; }
+    .task { font-size: .75rem; margin-top: 4px; }
+    .meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 5px; }
+    .pill {
+      font-size: .64rem; padding: 3px 7px; border-radius: 999px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .05em;
+      border: 1px solid transparent;
+    }
+    .mood-calm { color: var(--good); border-color: color-mix(in srgb, var(--good) 64%, transparent); background: color-mix(in srgb, var(--good) 16%, transparent); }
+    .mood-focus { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 64%, transparent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+    .mood-alert { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 64%, transparent); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+    .conf { color: var(--text); border-color: var(--line); background: color-mix(in srgb, var(--line) 42%, transparent); }
+
+    .bubble {
+      position: absolute;
+      max-width: 220px;
+      background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.08));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 7px 9px;
+      font-size: .72rem;
+      box-shadow: 0 10px 22px rgba(0,0,0,.2);
+      animation: float var(--float-speed) ease-in-out infinite;
+      backdrop-filter: blur(6px);
+    }
+    .bubble::after {
+      content: "";
+      position: absolute;
+      border: 7px solid transparent;
+      border-top-color: color-mix(in srgb, var(--line) 88%, transparent);
+      bottom: -13px; left: 22px;
+    }
+
+    .b1 { left: 9%; top: 7%; animation-delay: .2s; }
+    .b2 { right: 8%; top: 16%; animation-delay: 1.2s; }
+    .b3 { left: 35%; bottom: 8%; animation-delay: 2s; }
+
+    .path {
+      position: absolute; inset: 0;
+      pointer-events: none;
+    }
+    .path line {
+      stroke: color-mix(in srgb, var(--accent) 35%, var(--line));
+      stroke-width: 1.2;
+      stroke-dasharray: 4 8;
+      animation: dash 5s linear infinite;
+    }
+
+    .legend { display: flex; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: .75rem; }
+
+    @media (min-width: 920px) {
+      .topbar { padding: 16px; }
+      .scene-wrap { padding: 14px; }
+      .z1 { grid-column: 1 / 5; grid-row: 1 / 5; }
+      .z2 { grid-column: 5 / 9; grid-row: 1 / 4; }
+      .z3 { grid-column: 9 / 13; grid-row: 1 / 5; }
+      .z4 { grid-column: 3 / 8; grid-row: 5 / 9; }
+      .z5 { grid-column: 8 / 13; grid-row: 5 / 9; }
+    }
+
+    @media (max-width: 919px) {
+      .scene { min-height: 900px; }
+      .map { grid-template-columns: 1fr; grid-template-rows: repeat(5, minmax(160px, 1fr)); inset: 12px; }
+      .zone { min-height: 170px; }
+      .team-grid { inset: 48px 8px 8px; }
+      .card { min-height: 84px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; transition: none !important; }
+      *, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }
+      html { --ambient-speed: 0s; --pulse-speed: 0s; --bob-speed: 0s; --float-speed: 0s; }
     }
-    @keyframes fadeIn { from { opacity: .4; } to { opacity: 1; } }
-    @keyframes rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent); }
+      70% { box-shadow: 0 0 0 14px transparent; }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+    @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes dash { to { stroke-dashoffset: -120; } }
+    @keyframes sweep { from { transform: translateX(-10%); } to { transform: translateX(220%); } }
   </style>
 </head>
 <body>
-  <main class="container">
-    <header class="topbar glass">
-      <div class="title-wrap">
-        <h1>Mission Control</h1>
-        <p>Premium operational view for execution, priorities, and momentum.</p>
+  <main class="wrap">
+    <header class="glass topbar">
+      <div class="head">
+        <div>
+          <h1>Mission Control — Team Live Scene (V4 Preview)</h1>
+          <p class="sub">High-personality, professional team map with live movement, mood, confidence, and activity pulses.</p>
+        </div>
+        <div class="links">
+          <a class="link" href="./v2.html">v2</a>
+          <a class="link" href="./v3.html">v3</a>
+          <a class="link" href="./8bit.html">8-bit old</a>
+        </div>
       </div>
-      <div class="controls">
-        <div class="clock" id="clock"></div>
-        <button class="btn" id="themeToggle" type="button" aria-label="Toggle light and dark theme">Switch theme</button>
+      <div class="control">
+        <span style="color:var(--muted);font-size:.78rem;font-weight:700;">Animation intensity</span>
+        <div class="chips" id="intensityChips">
+          <button class="chip" data-mode="low" type="button">Low</button>
+          <button class="chip active" data-mode="normal" type="button">Normal</button>
+          <button class="chip" data-mode="high" type="button">High</button>
+        </div>
+        <button class="btn" id="themeToggle" type="button">Switch theme</button>
       </div>
     </header>
 
-    <section class="glass digest">
-      <h2 class="section-title">Quick-Digest ROI</h2>
-      <div class="kpi-strip" id="kpis"></div>
-      <div class="status-grid" id="statusCards"></div>
+    <section class="glass scene-wrap">
+      <div class="scene" id="sceneRoot" aria-label="Animated live team scene">
+        <div class="ambient"></div>
+        <svg class="path" viewBox="0 0 1200 700" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="130" y1="170" x2="450" y2="150"></line>
+          <line x1="470" y1="170" x2="830" y2="190"></line>
+          <line x1="250" y1="320" x2="640" y2="520"></line>
+          <line x1="860" y1="330" x2="760" y2="540"></line>
+        </svg>
+        <div class="bubble b1">“Search quality is back above baseline. Nice catch, team.”</div>
+        <div class="bubble b2">“Hotfix deployed. Watching conversion curve now.”</div>
+        <div class="bubble b3">“Syncing in 12 min for launch sequence handoff.”</div>
+        <div class="map" id="teamMap"></div>
+      </div>
+      <div class="legend" id="legend"></div>
     </section>
-
-    <section class="layout">
-      <article class="glass panel">
-        <h2 class="section-title">Priorities</h2>
-        <div id="priorities"></div>
-      </article>
-
-      <article class="glass panel">
-        <h2 class="section-title">Quick Actions</h2>
-        <nav class="actions" id="quickActions"></nav>
-      </article>
-
-      <article class="glass panel main">
-        <h2 class="section-title">Timeline / Activity Feed</h2>
-        <div id="timeline"></div>
-      </article>
-    </section>
-
-    <!-- V3 extra modules below top quick-digest section -->
-    <section class="advanced-grid">
-      <article class="glass panel">
-        <h2 class="section-title">Project Progress Trackers</h2>
-        <div id="projectTrackers"></div>
-      </article>
-
-      <article class="glass panel">
-        <h2 class="section-title">Project ETAs</h2>
-        <div id="etaWidgets"></div>
-      </article>
-
-      <article class="glass panel wide">
-        <h2 class="section-title">Team Minimap / Relationship View</h2>
-        <div class="team-minimap-wrap">
-          <svg class="team-minimap" id="teamMinimap" viewBox="0 0 640 250" role="img" aria-label="Team relationship minimap"></svg>
-          <div class="small-note">Nodes represent owners; links represent active collaboration on tracked projects.</div>
-        </div>
-      </article>
-
-      <article class="glass panel wide collapsible">
-        <button id="analyticsToggle" class="btn collapse-toggle" type="button" aria-expanded="false" aria-controls="analyticsContent">
-          <span>Advanced Analytics</span>
-          <span id="analyticsCaret">▾</span>
-        </button>
-        <div id="analyticsContent" class="collapse-content">
-          <div class="analytics-grid" id="advancedAnalytics"></div>
-        </div>
-      </article>
-    </section>
-
-    <footer class="footer" id="footerMeta"></footer>
   </main>
 
   <script>
-    /**
-     * Dashboard Data Schema (single-source updates)
-     * - kpis/statuses/priorities/quickActions/timeline: quick-digest + core ops
-     * - projectTrackers: progress bars + status chips
-     * - etas: ETA widgets + confidence labels
-     * - teamMap: node/link graph for collaboration minimap
-     * - analytics: collapsible advanced metrics cards
-     */
-    const dashboardData = {
-      kpis: [
-        { label: 'Execution Velocity', value: '92%', delta: '+8% vs last cycle', trend: 'up' },
-        { label: 'Open Critical Items', value: '3', delta: 'Flat in 24h', trend: 'flat' },
-        { label: 'Automation Uptime', value: '99.2%', delta: '+0.4% this week', trend: 'up' },
-        { label: 'Decision SLA', value: '26m', delta: '-6m average', trend: 'up' }
+    const sceneData = {
+      zones: [
+        {
+          id: 'z1',
+          className: 'z1',
+          name: 'Ops Bay',
+          mood: 'Focused momentum',
+          people: [
+            { emoji: '👩🏽‍💻', name: 'Maya', role: 'Ops Lead', task: 'Sequencing this morning runbook', mood: 'focus', confidence: 93 },
+            { emoji: '🧑🏻‍💻', name: 'Leo', role: 'Automation', task: 'Stabilizing handoff scripts', mood: 'calm', confidence: 89 }
+          ]
+        },
+        {
+          id: 'z2',
+          className: 'z2',
+          name: 'Signal Lab',
+          mood: 'Curious + analytical',
+          people: [
+            { emoji: '👨🏾‍🔬', name: 'Ravi', role: 'Quant Analyst', task: 'Retuning alert thresholds', mood: 'focus', confidence: 84 },
+            { emoji: '👩🏻‍🔬', name: 'Nina', role: 'Data Scientist', task: 'Comparing drift scenarios', mood: 'alert', confidence: 78 }
+          ]
+        },
+        {
+          id: 'z3',
+          className: 'z3',
+          name: 'Marketplace Desk',
+          mood: 'Fast response',
+          people: [
+            { emoji: '🧑🏽‍💼', name: 'Ari', role: 'Commerce Owner', task: 'Monitoring recovery window', mood: 'alert', confidence: 73 },
+            { emoji: '👨🏻‍💼', name: 'Jon', role: 'Listing Ops', task: 'Clearing sync retries', mood: 'focus', confidence: 81 }
+          ]
+        },
+        {
+          id: 'z4',
+          className: 'z4',
+          name: 'Planning Studio',
+          mood: 'Calm coordination',
+          people: [
+            { emoji: '👩🏾‍🗂️', name: 'Elena', role: 'Program Manager', task: 'Aligning release checklist', mood: 'calm', confidence: 88 },
+            { emoji: '🧑🏼‍🚀', name: 'Kai', role: 'Chief of Staff', task: 'Unblocking cross-team asks', mood: 'focus', confidence: 86 }
+          ]
+        },
+        {
+          id: 'z5',
+          className: 'z5',
+          name: 'Leadership Deck',
+          mood: 'High-confidence oversight',
+          people: [
+            { emoji: '🧠', name: 'Boss', role: 'Director', task: 'Prioritizing next decision gates', mood: 'calm', confidence: 95 }
+          ]
+        }
       ],
-      statuses: [
-        { lane: 'Overnight Ops', state: 'On Track', health: 'good', progress: 86 },
-        { lane: 'Data Pipeline', state: 'Stable', health: 'good', progress: 91 },
-        { lane: 'Marketplace Lane', state: 'Needs Attention', health: 'warn', progress: 58 },
-        { lane: 'Research Queue', state: 'Blocked Item', health: 'bad', progress: 34 }
-      ],
-      priorities: [
-        { title: 'Finalize morning brief v2 formatting', owner: 'Ops', priority: 'P1' },
-        { title: 'Resolve listing sync retries', owner: 'Commerce', priority: 'P1' },
-        { title: 'Tune watchlist alert thresholds', owner: 'Quant', priority: 'P2' },
-        { title: 'Prepare launch checklist for weekend run', owner: 'PM', priority: 'P3' }
-      ],
-      quickActions: [
-        { label: 'Open Runbook', note: 'Incident and recovery SOP', href: '#' },
-        { label: 'Review Alerts', note: 'High signal queue', href: '#' },
-        { label: 'Push Status Update', note: 'Broadcast latest snapshot', href: '#' },
-        { label: 'Plan Today', note: 'Focus + sequencing', href: '#' }
-      ],
-      timeline: [
-        { time: '06:45', title: 'Nightly reconciliation complete', note: '0 mismatch records across monitored lanes.' },
-        { time: '07:10', title: 'Priority alert triggered', note: 'Marketplace conversion dip crossed threshold.' },
-        { time: '07:22', title: 'Mitigation deployed', note: 'Fallback listing strategy enabled for critical SKUs.' },
-        { time: '07:44', title: 'Performance normalized', note: 'Lead indicators recovering with positive slope.' }
-      ],
-      projectTrackers: [
-        { name: 'Morning Brief Automation', completion: 82, status: 'good', phase: 'Integration' },
-        { name: 'Marketplace Recovery Sprint', completion: 61, status: 'warn', phase: 'Stabilization' },
-        { name: 'Signal Quality Upgrade', completion: 47, status: 'warn', phase: 'Calibration' },
-        { name: 'Ops Dashboard Instrumentation', completion: 94, status: 'good', phase: 'Validation' }
-      ],
-      etas: [
-        { project: 'Brief Automation GA', eta: 'Today 13:30', confidence: 'high', owner: 'Ops' },
-        { project: 'Sync Retry Hotfix', eta: 'Today 16:10', confidence: 'medium', owner: 'Commerce' },
-        { project: 'Alert Threshold Tuning', eta: 'Tomorrow 09:20', confidence: 'medium', owner: 'Quant' },
-        { project: 'Weekend Launch Checklist', eta: 'Tomorrow 12:00', confidence: 'low', owner: 'PM' }
-      ],
-      teamMap: {
-        nodes: [
-          { id: 'Boss', x: 320, y: 35, role: 'Director' },
-          { id: 'Ops', x: 145, y: 115, role: 'Execution' },
-          { id: 'Commerce', x: 495, y: 115, role: 'Marketplace' },
-          { id: 'Quant', x: 235, y: 205, role: 'Analytics' },
-          { id: 'PM', x: 405, y: 205, role: 'Planning' }
-        ],
-        links: [
-          ['Boss', 'Ops'], ['Boss', 'Commerce'], ['Ops', 'Quant'], ['Commerce', 'PM'], ['Quant', 'PM'], ['Ops', 'PM']
-        ],
-        assignments: [
-          'Ops + Quant → Morning Brief Automation',
-          'Commerce + PM → Sync Retry Hotfix',
-          'Boss + PM → Weekend Launch Sequencing'
-        ]
-      },
-      analytics: [
-        { metric: 'Forecast Accuracy (7d)', value: '88.6%', note: '+3.1pp WoW' },
-        { metric: 'Incident Mean Recovery', value: '21m', note: '-4m this cycle' },
-        { metric: 'Automation Coverage', value: '74%', note: '+6% last 2 weeks' },
-        { metric: 'Signal-to-Noise Ratio', value: '3.4x', note: 'High confidence trend' }
+      activityLegend: [
+        'Status glow = active work stream',
+        'Pulse = fresh team update',
+        'Mood tag = team emotional context',
+        'Confidence = self-reported certainty'
       ]
     };
 
-    const $ = (id) => document.getElementById(id);
+    const mapEl = document.getElementById('teamMap');
+    const legendEl = document.getElementById('legend');
+    const html = document.documentElement;
 
-    function renderKpis(items) {
-      $('kpis').innerHTML = items.map(item => `
-        <div class="kpi">
-          <div class="label">${item.label}</div>
-          <div class="value">${item.value}</div>
-          <div class="delta ${item.trend}">${item.delta}</div>
-        </div>
-      `).join('');
+    function moodClass(v) {
+      if (v === 'calm') return 'mood-calm';
+      if (v === 'alert') return 'mood-alert';
+      return 'mood-focus';
     }
 
-    function renderStatuses(items) {
-      $('statusCards').innerHTML = items.map((s, idx) => `
-        <article class="status-card" style="animation-delay:${idx * 55}ms">
-          <div class="status-head">
-            <div class="status-title">${s.lane}</div>
-            <span class="badge ${s.health}">${s.health}</span>
+    function renderScene() {
+      mapEl.innerHTML = sceneData.zones.map(z => `
+        <section class="zone ${z.className}">
+          <div class="zone-title">${z.name}</div>
+          <div class="pulse"></div>
+          <div class="team-grid">
+            ${z.people.map(p => `
+              <article class="card" title="${p.name} • ${p.role}">
+                <div class="glow"></div>
+                <div class="avatar" aria-hidden="true">${p.emoji}</div>
+                <div>
+                  <h3 class="name">${p.name}</h3>
+                  <div class="role">${p.role}</div>
+                  <div class="task">${p.task}</div>
+                  <div class="meta">
+                    <span class="pill ${moodClass(p.mood)}">${p.mood}</span>
+                    <span class="pill conf">${p.confidence}% confidence</span>
+                  </div>
+                </div>
+              </article>
+            `).join('')}
           </div>
-          <div class="status-value">${s.state}</div>
-          <div class="meter"><span style="width:${Math.max(0, Math.min(100, s.progress))}%"></span></div>
-        </article>
-      `).join('');
-    }
-
-    function renderPriorities(items) {
-      $('priorities').innerHTML = items.map(item => `
-        <div class="priority-item">
-          <div class="priority-row">
-            <strong>${item.title}</strong>
-            <span class="priority-tag">${item.priority}</span>
-          </div>
-          <div class="small-note">Owner: ${item.owner}</div>
-        </div>
-      `).join('');
-    }
-
-    function renderActions(items) {
-      $('quickActions').innerHTML = items.map(item => `
-        <a class="action-item" href="${item.href}" target="_self" rel="noopener">
-          <span class="action-label">${item.label}</span>
-          <span class="action-note">${item.note}</span>
-        </a>
-      `).join('');
-    }
-
-    function renderTimeline(items) {
-      $('timeline').innerHTML = items.map(item => `
-        <div class="timeline-item">
-          <div class="timeline-time">${item.time}</div>
-          <div>
-            <div class="timeline-title">${item.title}</div>
-            <div class="timeline-note">${item.note}</div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderTrackers(items) {
-      $('projectTrackers').innerHTML = items.map(item => `
-        <div class="tracker-item">
-          <div class="tracker-row">
-            <strong>${item.name}</strong>
-            <span class="badge ${item.status}">${item.status}</span>
-          </div>
-          <div class="small-note">Phase: ${item.phase} • ${item.completion}%</div>
-          <div class="meter" aria-label="${item.name} completion"><span style="width:${item.completion}%"></span></div>
-        </div>
-      `).join('');
-    }
-
-    function renderEtas(items) {
-      $('etaWidgets').innerHTML = items.map(item => `
-        <div class="eta-item">
-          <div class="eta-row">
-            <strong>${item.project}</strong>
-            <span class="badge ${item.confidence}">${item.confidence} confidence</span>
-          </div>
-          <div class="eta-meta small-note">ETA: ${item.eta} • Owner: ${item.owner}</div>
-        </div>
-      `).join('');
-    }
-
-    function renderTeamMinimap(map) {
-      const svg = $('teamMinimap');
-      const nodeById = Object.fromEntries(map.nodes.map(n => [n.id, n]));
-      const links = map.links.map(([a, b]) => {
-        const na = nodeById[a], nb = nodeById[b];
-        if (!na || !nb) return '';
-        return `<line class="team-link" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}" />`;
-      }).join('');
-
-      const nodes = map.nodes.map(n => `
-        <g>
-          <circle class="team-node" cx="${n.x}" cy="${n.y}" r="20"></circle>
-          <text class="team-label" x="${n.x}" y="${n.y + 4}" text-anchor="middle">${n.id}</text>
-        </g>
+        </section>
       `).join('');
 
-      const assignments = map.assignments.map((t, i) => `<text class="team-label" x="16" y="${22 + i * 14}">${t}</text>`).join('');
-      svg.innerHTML = `${links}${nodes}<g opacity="0.9">${assignments}</g>`;
+      legendEl.innerHTML = sceneData.activityLegend.map(x => `<span>• ${x}</span>`).join('');
     }
 
-    function renderAnalytics(items) {
-      $('advancedAnalytics').innerHTML = items.map(item => `
-        <div class="analytic">
-          <div class="small-note">${item.metric}</div>
-          <strong>${item.value}</strong>
-          <div class="small-note">${item.note}</div>
-          <div class="spark"></div>
-        </div>
-      `).join('');
-    }
-
-    function setupAnalyticsCollapse() {
-      const btn = $('analyticsToggle');
-      const content = $('analyticsContent');
-      const caret = $('analyticsCaret');
-      btn.addEventListener('click', () => {
-        const open = content.classList.toggle('open');
-        btn.setAttribute('aria-expanded', String(open));
-        caret.textContent = open ? '▴' : '▾';
-      });
-    }
-
-    function updateClock() {
-      const now = new Date();
-      $('clock').textContent = `Updated ${now.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}`;
-      $('footerMeta').textContent = `Mission Control v3 • Static deploy ready (GitHub Pages / Vercel) • ${now.toLocaleTimeString()}`;
-    }
-
-    function setupThemeToggle() {
-      const key = 'mission-control-theme';
-      const html = document.documentElement;
+    function setupControls() {
+      const chips = Array.from(document.querySelectorAll('.chip'));
+      const key = 'mc-v4-anim';
       const saved = localStorage.getItem(key);
-      if (saved === 'light' || saved === 'dark') html.setAttribute('data-theme', saved);
-      $('themeToggle').addEventListener('click', () => {
+      if (saved) setAnimMode(saved, chips);
+
+      document.getElementById('intensityChips').addEventListener('click', (e) => {
+        const btn = e.target.closest('.chip');
+        if (!btn) return;
+        setAnimMode(btn.dataset.mode, chips);
+        localStorage.setItem(key, btn.dataset.mode);
+      });
+
+      const themeKey = 'mc-v4-theme';
+      const savedTheme = localStorage.getItem(themeKey);
+      if (savedTheme === 'light' || savedTheme === 'dark') html.setAttribute('data-theme', savedTheme);
+
+      document.getElementById('themeToggle').addEventListener('click', () => {
         const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         html.setAttribute('data-theme', next);
-        localStorage.setItem(key, next);
+        localStorage.setItem(themeKey, next);
       });
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setAnimMode('low', chips);
+      }
     }
 
-    function boot() {
-      renderKpis(dashboardData.kpis);
-      renderStatuses(dashboardData.statuses);
-      renderPriorities(dashboardData.priorities);
-      renderActions(dashboardData.quickActions);
-      renderTimeline(dashboardData.timeline);
-      renderTrackers(dashboardData.projectTrackers);
-      renderEtas(dashboardData.etas);
-      renderTeamMinimap(dashboardData.teamMap);
-      renderAnalytics(dashboardData.analytics);
-      setupAnalyticsCollapse();
-      setupThemeToggle();
-      updateClock();
-      setInterval(updateClock, 60000);
+    function setAnimMode(mode, chips) {
+      html.setAttribute('data-anim', mode);
+      chips.forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
     }
 
-    boot();
+    renderScene();
+    setupControls();
   </script>
 </body>
 </html>
