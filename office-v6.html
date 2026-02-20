@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission Control Office v6</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, system-ui, sans-serif;
+      background: radial-gradient(circle at 20% 0%, #1e2f4f 0%, #0a1020 55%, #070b16 100%);
+      color: #eaf0ff;
+      min-height: 100vh;
+    }
+    #app { min-height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+    .topbar {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(8,12,24,.6);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .title { font-weight: 700; letter-spacing: .2px; }
+    .subtitle { opacity: .8; font-size: 12px; }
+    .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    button, .badge {
+      border: 1px solid rgba(255,255,255,.2);
+      background: rgba(255,255,255,.07);
+      color: #eaf0ff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+    }
+    button.active { background: #7ea6ff; color: #0a1020; border-color: #7ea6ff; font-weight: 700; }
+    .stage-wrap { padding: 10px; }
+    .stage {
+      width: min(1200px, 100%);
+      margin: 0 auto;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 18px 50px rgba(0,0,0,.45);
+      aspect-ratio: 16 / 9;
+      background: #0b1226;
+    }
+    #phaser-root { width: 100%; height: 100%; }
+    @media (max-width: 760px) {
+      .subtitle { width: 100%; }
+      .topbar { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+
+  <script>
+    (() => {
+      const { useEffect, useMemo, useRef, useState } = React;
+
+      const TEAM = [
+        { id: 'krispy', name: 'Krispy', role: 'Incident Commander', x: 180, y: 240, color: 0x6ea8ff, energy: 'steady', cadence: 0.95, museLane: false },
+        { id: 'dev', name: 'Dev', role: 'Systems Builder', x: 430, y: 250, color: 0x74f0d1, energy: 'focused', cadence: 1.25, museLane: false },
+        { id: 'reese', name: 'Reese', role: 'Ops Analyst', x: 675, y: 242, color: 0xffc86f, energy: 'methodical', cadence: 0.8, museLane: false },
+        { id: 'eboy', name: 'Eboy', role: 'Comms + Alerts', x: 920, y: 250, color: 0xff89c0, energy: 'quick', cadence: 1.45, museLane: false },
+        { id: 'quant', name: 'Quant', role: 'Model Strategist', x: 280, y: 430, color: 0xc394ff, energy: 'calm', cadence: 0.72, museLane: false },
+        { id: 'muse', name: 'Muse', role: 'Tejal Support Lane', x: 820, y: 430, color: 0x8bff99, energy: 'empathetic', cadence: 1.05, museLane: true }
+      ];
+
+      class OfficeScene extends Phaser.Scene {
+        constructor() {
+          super('office');
+          this.members = [];
+          this.motion = 'normal';
+          this.motionScale = 1;
+        }
+
+        create() {
+          this.cameras.main.setBackgroundColor('#0b1226');
+          this.makeBackdrop();
+          this.makeAmbient();
+          this.makeTeam();
+          this.makeMuseLane();
+
+          this.events.on('motion:set', (m) => this.setMotion(m));
+          this.events.on('settings:reduced', (r) => {
+            if (r) this.setMotion('low');
+          });
+        }
+
+        setMotion(mode) {
+          this.motion = mode;
+          const scale = { low: 0.45, normal: 1, high: 1.35 }[mode] || 1;
+          this.motionScale = scale;
+          this.tweens.timeScale = scale;
+          this.members.forEach((m) => m.retime(scale));
+        }
+
+        makeBackdrop() {
+          const w = this.scale.width, h = this.scale.height;
+          const g = this.add.graphics();
+          g.fillGradientStyle(0x101a34, 0x101a34, 0x0a1021, 0x0a1021, 1);
+          g.fillRect(0, 0, w, h);
+
+          for (let i = 0; i < 18; i++) {
+            const x = i * (w / 18) + 8;
+            const glow = this.add.rectangle(x, 42 + (i % 3) * 4, 40, 8, 0x5f8cff, 0.15);
+            this.tweens.add({ targets: glow, alpha: { from: 0.08, to: 0.26 }, duration: 1200 + i * 80, yoyo: true, repeat: -1 });
+          }
+
+          for (let i = 0; i < 2; i++) {
+            this.add.rectangle(w * (0.27 + i * 0.46), h * 0.52, 500, 200, 0x17213d, 0.9).setStrokeStyle(2, 0x2f477d, 0.7);
+          }
+        }
+
+        makeAmbient() {
+          this.chatGroup = this.add.group();
+          this.time.addEvent({
+            delay: 1400,
+            loop: true,
+            callback: () => {
+              if (this.motionScale < 0.5 && Math.random() > 0.45) return;
+              const y = Phaser.Math.Between(70, 180);
+              const x = Phaser.Math.Between(100, this.scale.width - 120);
+              const ping = this.add.circle(x, y, Phaser.Math.Between(4, 8), 0x97b8ff, 0.7);
+              this.chatGroup.add(ping);
+              this.tweens.add({ targets: ping, alpha: 0, scale: 1.8, duration: 900, onComplete: () => ping.destroy() });
+            }
+          });
+
+          const floor = this.add.rectangle(this.scale.width / 2, this.scale.height - 44, this.scale.width, 120, 0x0c162c, 0.95);
+          this.tweens.add({ targets: floor, alpha: { from: 0.88, to: 1 }, duration: 4000, yoyo: true, repeat: -1 });
+        }
+
+        makeTeam() {
+          TEAM.forEach((person) => this.members.push(new TeamAvatar(this, person)));
+        }
+
+        makeMuseLane() {
+          const lane = this.add.container(960, 450);
+          lane.add(this.add.rectangle(0, 0, 260, 150, 0x1f2b1c, 0.85).setStrokeStyle(1, 0x7bff93, 0.6));
+          lane.add(this.add.text(-115, -58, 'MUSE · TEJAL SUPPORT', { fontFamily: 'monospace', fontSize: '12px', color: '#adffc0' }));
+
+          for (let i = 0; i < 3; i++) {
+            const ticket = this.add.rectangle(-90 + i * 70, 10 - i * 18, 56, 26, 0x334f2f, 0.95).setStrokeStyle(1, 0x9fffae, 0.5);
+            lane.add(ticket);
+            this.tweens.add({ targets: ticket, x: ticket.x + 28, yoyo: true, repeat: -1, duration: 1000 + i * 350, ease: 'sine.inOut' });
+          }
+
+          const pulse = this.add.circle(92, 24, 7, 0x9effb1, 0.95);
+          lane.add(pulse);
+          this.tweens.add({ targets: pulse, scale: 2.2, alpha: 0.1, repeat: -1, duration: 1300, yoyo: false });
+        }
+      }
+
+      class TeamAvatar {
+        constructor(scene, model) {
+          this.scene = scene;
+          this.model = model;
+          this.scale = 1;
+          this.container = scene.add.container(model.x, model.y);
+          this.draw();
+          this.animate();
+        }
+
+        draw() {
+          const c = this.container;
+          const { scene, model } = this;
+          const base = scene.add.rectangle(0, 24, 170, 110, 0x141f3a, 0.9).setStrokeStyle(1, model.color, 0.6);
+          const monitor = scene.add.rectangle(0, -10, 100, 52, 0x1e355c, 0.95).setStrokeStyle(2, 0x83a5ff, 0.5);
+          const glow = scene.add.rectangle(0, -10, 92, 44, model.color, 0.16);
+          const body = scene.add.rectangle(0, 33, 46, 56, Phaser.Display.Color.Interpolate.ColorWithColor(Phaser.Display.Color.ValueToColor(model.color), Phaser.Display.Color.ValueToColor(0xffffff), 100, 35).color, 1);
+          const head = scene.add.circle(0, -6, 19, 0xf6dcc8, 1);
+          const eyeL = scene.add.circle(-7, -8, 2.1, 0x1a1a1a, 1);
+          const eyeR = scene.add.circle(7, -8, 2.1, 0x1a1a1a, 1);
+          const hands = scene.add.rectangle(0, 55, 52, 8, 0xf0c9ab, 1);
+          const name = scene.add.text(0, 72, `${model.name} · ${model.role}`, { fontSize: '11px', color: '#eaf0ff' }).setOrigin(0.5, 0);
+
+          c.add([base, monitor, glow, body, head, eyeL, eyeR, hands, name]);
+
+          this.parts = { glow, head, eyeL, eyeR, hands, monitor };
+        }
+
+        animate() {
+          const { scene, model, container, parts } = this;
+          const cadence = model.cadence;
+
+          gsap.to(container, {
+            y: container.y - (model.energy === 'quick' ? 6 : model.energy === 'calm' ? 2 : 4),
+            duration: (1.35 / cadence),
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+          });
+
+          scene.tweens.add({
+            targets: parts.hands,
+            x: { from: -5, to: 5 },
+            duration: 220 / cadence,
+            yoyo: true,
+            repeat: -1,
+            ease: 'sine.inOut'
+          });
+
+          scene.tweens.add({ targets: parts.glow, alpha: { from: 0.08, to: 0.22 }, duration: 900 / cadence, yoyo: true, repeat: -1 });
+
+          scene.time.addEvent({
+            delay: Phaser.Math.Between(1600, 3600),
+            loop: true,
+            callback: () => {
+              scene.tweens.add({ targets: [parts.eyeL, parts.eyeR], scaleY: 0.1, duration: 80, yoyo: true, repeat: 0 });
+            }
+          });
+
+          scene.time.addEvent({
+            delay: Phaser.Math.Between(2200, 4400),
+            loop: true,
+            callback: () => {
+              scene.tweens.add({ targets: parts.head, x: Phaser.Math.Between(-4, 4), duration: 220, yoyo: true });
+            }
+          });
+
+          if (model.id === 'muse') {
+            scene.tweens.add({ targets: container, angle: { from: -0.5, to: 0.8 }, duration: 1400, yoyo: true, repeat: -1 });
+          } else if (model.id === 'dev') {
+            scene.tweens.add({ targets: container, x: container.x + 10, duration: 1500, yoyo: true, repeat: -1, ease: 'quad.inOut' });
+          }
+        }
+
+        retime(scale) {
+          gsap.globalTimeline.timeScale(scale);
+          this.container.setScale(1 + (scale - 1) * 0.04);
+        }
+      }
+
+      function createGame(motion) {
+        const mobile = window.matchMedia('(max-width: 760px)').matches;
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const pixelRatioCap = mobile ? 1.3 : 1.7;
+
+        const game = new Phaser.Game({
+          type: Phaser.AUTO,
+          parent: 'phaser-root',
+          transparent: false,
+          antialias: !mobile,
+          scale: {
+            mode: Phaser.Scale.RESIZE,
+            autoCenter: Phaser.Scale.CENTER_BOTH,
+            width: 1280,
+            height: 720
+          },
+          fps: { target: 60, smoothStep: true, forceSetTimeOut: mobile },
+          render: { pixelArt: false, powerPreference: 'high-performance', maxTextures: 8, mipmapFilter: 'LINEAR' },
+          resolution: Math.min(window.devicePixelRatio || 1, pixelRatioCap),
+          scene: [OfficeScene]
+        });
+
+        game.events.once('ready', () => {
+          const s = game.scene.getScene('office');
+          s.events.emit('settings:reduced', reduced);
+          s.events.emit('motion:set', reduced ? 'low' : motion);
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) game.loop.sleep();
+          else game.loop.wake();
+        });
+
+        return game;
+      }
+
+      function App() {
+        const prefersReduced = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, []);
+        const [motion, setMotion] = useState(prefersReduced ? 'low' : 'normal');
+        const gameRef = useRef(null);
+
+        useEffect(() => {
+          gameRef.current = createGame(motion);
+          return () => { if (gameRef.current) gameRef.current.destroy(true); };
+        }, []);
+
+        useEffect(() => {
+          const g = gameRef.current;
+          if (!g) return;
+          const scene = g.scene.getScene('office');
+          if (scene) scene.events.emit('motion:set', motion);
+        }, [motion]);
+
+        const motionButtons = ['low', 'normal', 'high'];
+
+        return React.createElement(
+          React.Fragment,
+          null,
+          React.createElement('div', { className: 'topbar' },
+            React.createElement('div', null,
+              React.createElement('div', { className: 'title' }, 'Mission Control Office · v6 Preview'),
+              React.createElement('div', { className: 'subtitle' }, 'Phaser + React shell + GSAP | Team: Krispy, Dev, Reese, Eboy, Quant, Muse')
+            ),
+            React.createElement('div', { className: 'controls' },
+              React.createElement('span', { className: 'badge' }, `prefers-reduced-motion: ${prefersReduced ? 'on' : 'off'}`),
+              motionButtons.map((m) => React.createElement('button', {
+                key: m,
+                className: motion === m ? 'active' : '',
+                onClick: () => setMotion(m)
+              }, `motion ${m}`))
+            )
+          ),
+          React.createElement('div', { className: 'stage-wrap' },
+            React.createElement('div', { className: 'stage' },
+              React.createElement('div', { id: 'phaser-root' })
+            )
+          )
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById('app')).render(React.createElement(App));
+    })();
+  </script>
+</body>
+</html>
