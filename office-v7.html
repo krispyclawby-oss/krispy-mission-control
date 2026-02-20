@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission Control Office v7</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, system-ui, sans-serif;
+      background: radial-gradient(circle at 15% 0%, #24345f 0%, #0a1226 52%, #060a15 100%);
+      color: #eff4ff;
+      min-height: 100vh;
+    }
+    #app { min-height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+    .topbar {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(8,12,24,.68);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .title { font-weight: 800; letter-spacing: .3px; }
+    .subtitle { opacity: .84; font-size: 12px; }
+    .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    button, .badge {
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.07);
+      color: #eaf0ff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+    }
+    button.active { background: #8fbcff; color: #0b1225; border-color: #8fbcff; font-weight: 700; }
+    .stage-wrap { padding: 10px; }
+    .stage {
+      width: min(1280px, 100%);
+      margin: 0 auto;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      aspect-ratio: 16 / 9;
+      background: #0a1226;
+    }
+    #phaser-root { width: 100%; height: 100%; }
+    @media (max-width: 760px) {
+      .subtitle { width: 100%; }
+      .topbar { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+
+  <script>
+    (() => {
+      const { useEffect, useMemo, useRef, useState } = React;
+
+      const TEAM = [
+        {
+          id: 'krispy', name: 'Krispy', role: 'Chief of Staff / Manager', x: 220, y: 285, depth: 280,
+          palette: { primary: 0x7ca9ff, accent: 0xc5d8ff, desk: 0x22375f }, silhouette: 'tall', posture: 'upright', tempo: 0.88,
+          prop: 'clipboard', microcopy: ['Queue discipline +2', 'Standup in 07:00', 'Escalation handled']
+        },
+        {
+          id: 'dev', name: 'Dev', role: 'Builder', x: 510, y: 300, depth: 300,
+          palette: { primary: 0x72f2d3, accent: 0xb8fff0, desk: 0x1d4f4a }, silhouette: 'hoodie', posture: 'forward', tempo: 1.25,
+          prop: 'dual-monitor', microcopy: ['Shipping patch', 'Refactor pass green', 'Latency down 12%']
+        },
+        {
+          id: 'reese', name: 'Reese', role: 'Operations Analyst', x: 800, y: 287, depth: 285,
+          palette: { primary: 0xffc876, accent: 0xffe3b6, desk: 0x5b4320 }, silhouette: 'slim', posture: 'precise', tempo: 0.82,
+          prop: 'notebook', microcopy: ['Anomaly tagged', 'Runbook updated', 'Trendline stable']
+        },
+        {
+          id: 'eboy', name: 'Eboy', role: 'Comms', x: 1070, y: 310, depth: 310,
+          palette: { primary: 0xff89c2, accent: 0xffc4df, desk: 0x5b2748 }, silhouette: 'lean', posture: 'tilted', tempo: 1.42,
+          prop: 'mic', microcopy: ['Alert burst x4', 'Broadcasting update', 'All eyes on channel']
+        },
+        {
+          id: 'quant', name: 'Quant', role: 'Strategy / Modeling', x: 360, y: 510, depth: 510,
+          palette: { primary: 0xc79aff, accent: 0xe2cfff, desk: 0x3a2a5f }, silhouette: 'broad', posture: 'still', tempo: 0.72,
+          prop: 'chart-wall', microcopy: ['Confidence ↑', 'Hedge balanced', 'Model converged']
+        },
+        {
+          id: 'muse', name: 'Muse', role: 'Creative Signal', x: 930, y: 510, depth: 510,
+          palette: { primary: 0x91ff9f, accent: 0xd3ffd8, desk: 0x294c34 }, silhouette: 'soft', posture: 'open', tempo: 1.02,
+          prop: 'plant', microcopy: ['Tejal lane calm', 'Empathy ping sent', 'Draft polished']
+        }
+      ];
+
+      class OfficeScene extends Phaser.Scene {
+        constructor() {
+          super('office-v7');
+          this.motionScale = 1;
+          this.motionMode = 'normal';
+          this.members = [];
+          this.eventTimers = [];
+        }
+
+        create() {
+          this.cameras.main.setBackgroundColor('#0a1226');
+          this.makeBackdrop();
+          this.makeOfficeLayout();
+          this.makeAmbientSystems();
+          this.makeTeam();
+          this.bindParallax();
+
+          this.events.on('motion:set', (m) => this.setMotion(m));
+          this.events.on('settings:reduced', (reduced) => { if (reduced) this.setMotion('low'); });
+        }
+
+        setMotion(mode) {
+          this.motionMode = mode;
+          this.motionScale = ({ low: 0.42, normal: 1, high: 1.35 }[mode] || 1);
+          this.tweens.timeScale = this.motionScale;
+          gsap.globalTimeline.timeScale(this.motionScale);
+          this.members.forEach((m) => m.setMotion(this.motionScale, mode));
+        }
+
+        makeBackdrop() {
+          const w = this.scale.width, h = this.scale.height;
+          const g = this.add.graphics();
+          g.fillGradientStyle(0x121e3e, 0x121e3e, 0x0a1226, 0x091021, 1);
+          g.fillRect(0, 0, w, h);
+
+          this.backLayer = this.add.container(0, 0);
+          this.midLayer = this.add.container(0, 0);
+          this.frontLayer = this.add.container(0, 0);
+
+          for (let i = 0; i < 30; i++) {
+            const x = Phaser.Math.Between(20, w - 20);
+            const y = Phaser.Math.Between(16, 180);
+            const dot = this.add.circle(x, y, Phaser.Math.Between(1, 3), 0x87a8ff, 0.6);
+            this.backLayer.add(dot);
+            this.tweens.add({ targets: dot, alpha: { from: 0.25, to: 0.8 }, duration: 1200 + i * 50, yoyo: true, repeat: -1 });
+          }
+
+          for (let i = 0; i < 3; i++) {
+            const panel = this.add.rectangle(300 + i * 350, 145, 280, 120, 0x1a2749, 0.7).setStrokeStyle(1, 0x4f6faa, 0.5);
+            this.midLayer.add(panel);
+            const scan = this.add.rectangle(panel.x - 120, panel.y, 16, 100, 0x8bb6ff, 0.12);
+            this.midLayer.add(scan);
+            this.tweens.add({ targets: scan, x: panel.x + 120, duration: 2200 + i * 600, repeat: -1, ease: 'sine.inOut' });
+          }
+
+          const floor = this.add.ellipse(w / 2, h - 28, w * 1.1, 200, 0x0a1328, 0.95);
+          this.frontLayer.add(floor);
+          this.tweens.add({ targets: floor, alpha: { from: 0.85, to: 1 }, duration: 4000, repeat: -1, yoyo: true });
+        }
+
+        makeOfficeLayout() {
+          const desks = [
+            [220, 320, 250, 130], [510, 335, 255, 130], [800, 320, 255, 130], [1070, 345, 250, 130],
+            [360, 545, 290, 140], [930, 545, 310, 145]
+          ];
+
+          desks.forEach((d, i) => {
+            const [x, y, w, h] = d;
+            const desk = this.add.rectangle(x, y, w, h, 0x182745, 0.95).setStrokeStyle(2, 0x3a548c, 0.7).setDepth(y - 14);
+            const edge = this.add.rectangle(x, y + h / 2 - 8, w, 12, 0x0f1b34, 0.95).setDepth(y + 1);
+            const chair = this.add.rectangle(x - 5, y + 72, 64, 38, 0x0f172f, 0.95).setStrokeStyle(1, 0x344a78, 0.8).setDepth(y + 20);
+            this.tweens.add({ targets: chair, x: chair.x + (i % 2 ? 7 : -7), duration: 2200 + i * 130, yoyo: true, repeat: -1, ease: 'sine.inOut' });
+            this.frontLayer.add([desk, edge, chair]);
+          });
+
+          const collaborationTable = this.add.rectangle(640, 450, 230, 90, 0x202f54, 0.92).setStrokeStyle(2, 0x627fbe, 0.6).setDepth(440);
+          const holo = this.add.ellipse(640, 435, 130, 46, 0x85b5ff, 0.22).setDepth(441);
+          this.frontLayer.add([collaborationTable, holo]);
+          this.tweens.add({ targets: holo, scaleX: { from: 0.8, to: 1.15 }, scaleY: { from: 0.82, to: 1.08 }, alpha: { from: 0.12, to: 0.34 }, duration: 1800, repeat: -1, yoyo: true });
+        }
+
+        makeAmbientSystems() {
+          const bubble = () => {
+            if (this.motionMode === 'low' && Math.random() > 0.4) return;
+            const x = Phaser.Math.Between(140, this.scale.width - 120);
+            const y = Phaser.Math.Between(78, 220);
+            const p = this.add.circle(x, y, Phaser.Math.Between(3, 6), 0x95b9ff, 0.7).setDepth(90);
+            this.tweens.add({ targets: p, y: y - Phaser.Math.Between(20, 45), alpha: 0, duration: 900, onComplete: () => p.destroy() });
+          };
+          this.eventTimers.push(this.time.addEvent({ delay: 1200, callback: bubble, loop: true }));
+
+          const pairings = [['dev', 'reese'], ['krispy', 'eboy'], ['quant', 'muse'], ['krispy', 'quant']];
+          const collab = () => {
+            const [aId, bId] = Phaser.Utils.Array.GetRandom(pairings);
+            const a = this.members.find(m => m.model.id === aId), b = this.members.find(m => m.model.id === bId);
+            if (!a || !b) return;
+            const beam = this.add.line(0, 0, a.container.x, a.container.y - 45, b.container.x, b.container.y - 45, 0x9ab7ff, 0.35).setLineWidth(2,2).setDepth(260);
+            this.tweens.add({ targets: beam, alpha: 0, duration: 1000, onComplete: () => beam.destroy() });
+            a.reaction('sync');
+            b.reaction('sync');
+          };
+          this.eventTimers.push(this.time.addEvent({ delay: 4200, callback: collab, loop: true }));
+
+          const courier = this.add.circle(120, 650, 12, 0x9ce2ff, 0.9).setDepth(640);
+          const route = [ [120,650], [320,600], [620,575], [910,600], [1160,650] ];
+          let step = 0;
+          const runCourier = () => {
+            if (this.motionMode === 'low') return;
+            step = (step + 1) % route.length;
+            this.tweens.add({
+              targets: courier,
+              x: route[step][0], y: route[step][1], duration: 1600,
+              ease: 'sine.inOut', onComplete: () => {
+                const ring = this.add.circle(courier.x, courier.y, 8, 0x9ce2ff, 0.4).setDepth(639);
+                this.tweens.add({ targets: ring, scale: 2.8, alpha: 0, duration: 500, onComplete: () => ring.destroy() });
+              }
+            });
+          };
+          this.eventTimers.push(this.time.addEvent({ delay: 1800, callback: runCourier, loop: true }));
+        }
+
+        makeTeam() {
+          TEAM.forEach((model) => {
+            const member = new TeamAvatar(this, model);
+            this.members.push(member);
+          });
+        }
+
+        bindParallax() {
+          const w = this.scale.width, h = this.scale.height;
+          this.input.on('pointermove', (p) => {
+            const nx = Phaser.Math.Clamp((p.x - w / 2) / (w / 2), -1, 1);
+            const ny = Phaser.Math.Clamp((p.y - h / 2) / (h / 2), -1, 1);
+            if (this.motionMode === 'low') return;
+            this.backLayer.x = nx * -10; this.backLayer.y = ny * -6;
+            this.midLayer.x = nx * -18; this.midLayer.y = ny * -10;
+            this.frontLayer.x = nx * -26; this.frontLayer.y = ny * -14;
+          });
+        }
+      }
+
+      class TeamAvatar {
+        constructor(scene, model) {
+          this.scene = scene;
+          this.model = model;
+          this.container = scene.add.container(model.x, model.y).setDepth(model.depth);
+          this.draw();
+          this.animate();
+          this.statusTicker();
+        }
+
+        draw() {
+          const s = this.scene;
+          const m = this.model;
+          const c = this.container;
+
+          const deskGlow = s.add.ellipse(0, 50, 180, 70, m.palette.primary, 0.14);
+          const body = s.add.rectangle(0, 20, m.silhouette === 'broad' ? 62 : 48, m.silhouette === 'tall' ? 78 : 64, m.palette.primary, 0.95).setStrokeStyle(1, m.palette.accent, 0.5);
+          const neck = s.add.rectangle(0, -19, 14, 8, 0xf1c8ab, 1);
+          const head = s.add.circle(0, -36, m.silhouette === 'soft' ? 24 : 21, 0xf6d5be, 1).setStrokeStyle(1, 0xd5ac96, 0.7);
+          const hair = s.add.ellipse(0, -46, 34, 20, m.id === 'muse' ? 0x2f4e3a : m.id === 'eboy' ? 0x4a2745 : 0x2c3550, 1);
+          const eyeL = s.add.circle(-7, -38, 2.1, 0x1a1a1a, 1);
+          const eyeR = s.add.circle(7, -38, 2.1, 0x1a1a1a, 1);
+          const mouth = s.add.rectangle(0, -29, 8, 2, 0x9a5f4d, 0.9);
+          const armL = s.add.rectangle(-22, 18, 10, 42, 0xf0c8ad, 1);
+          const armR = s.add.rectangle(22, 18, 10, 42, 0xf0c8ad, 1);
+          const hands = s.add.rectangle(0, 42, 54, 7, 0xf2ceb3, 1);
+
+          const monitorA = s.add.rectangle(-24, -2, 62, 38, 0x1b3055, 0.95).setStrokeStyle(2, m.palette.primary, 0.55);
+          const monitorB = s.add.rectangle(30, -6, m.prop === 'dual-monitor' ? 56 : 2, m.prop === 'dual-monitor' ? 34 : 2, 0x223d6a, m.prop === 'dual-monitor' ? 0.95 : 0);
+          const uiPulse = s.add.rectangle(-24, -2, 52, 30, m.palette.primary, 0.18);
+
+          const name = s.add.text(0, 84, m.name, { fontSize: '14px', color: Phaser.Display.Color.IntegerToColor(m.palette.accent).rgba }).setOrigin(0.5, 0);
+          const role = s.add.text(0, 101, m.role, { fontSize: '10px', color: '#c9d5f4' }).setOrigin(0.5, 0);
+
+          const prop = this.drawProp(m.prop, m.palette.primary);
+          const statusBox = s.add.rectangle(0, -86, 144, 22, 0x111d38, 0.95).setStrokeStyle(1, m.palette.primary, 0.5);
+          const statusText = s.add.text(0, -86, m.microcopy[0], { fontSize: '10px', color: '#d8e6ff' }).setOrigin(0.5);
+
+          c.add([deskGlow, monitorA, monitorB, uiPulse, body, neck, head, hair, eyeL, eyeR, mouth, armL, armR, hands, prop, name, role, statusBox, statusText]);
+
+          this.parts = { deskGlow, body, head, eyeL, eyeR, mouth, armL, armR, hands, uiPulse, statusBox, statusText, hair };
+        }
+
+        drawProp(kind, color) {
+          const s = this.scene;
+          switch (kind) {
+            case 'clipboard': return s.add.rectangle(34, 30, 18, 26, 0xe8ddbd, 1).setStrokeStyle(1, 0x6f7ea9, 0.5);
+            case 'dual-monitor': return s.add.rectangle(48, -4, 10, 28, color, 0.5);
+            case 'notebook': return s.add.rectangle(36, 36, 24, 16, 0xedd8ac, 1).setStrokeStyle(1, 0x8d6f3e, 0.6);
+            case 'mic': return s.add.circle(38, 18, 8, 0x2a2a3c, 1).setStrokeStyle(2, color, 0.6);
+            case 'chart-wall': return s.add.rectangle(45, -22, 24, 38, 0x30254b, 1).setStrokeStyle(1, color, 0.6);
+            case 'plant': {
+              const pot = s.add.rectangle(34, 40, 20, 12, 0x7a5639, 1);
+              const leaf = s.add.ellipse(34, 25, 16, 20, 0x5ab06b, 1);
+              const c = s.add.container(0,0,[pot,leaf]);
+              return c;
+            }
+            default: return s.add.rectangle(34, 34, 14, 14, color, 0.4);
+          }
+        }
+
+        animate() {
+          const { scene: s, model: m, container: c, parts: p } = this;
+          const t = m.tempo;
+
+          gsap.to(c, { y: c.y - (m.posture === 'forward' ? 7 : m.posture === 'still' ? 2 : 5), duration: 1.5 / t, yoyo: true, repeat: -1, ease: 'sine.inOut' });
+          s.tweens.add({ targets: p.body, scaleY: { from: 0.98, to: 1.02 }, duration: 1700 / t, yoyo: true, repeat: -1, ease: 'sine.inOut' });
+          s.tweens.add({ targets: p.hands, x: { from: -6, to: 6 }, duration: Phaser.Math.Between(170, 320) / t, yoyo: true, repeat: -1, ease: 'sine.inOut' });
+          s.tweens.add({ targets: p.uiPulse, alpha: { from: 0.1, to: 0.34 }, duration: 850 / t, yoyo: true, repeat: -1 });
+          s.tweens.add({ targets: [p.armL, p.armR], angle: { from: -3, to: 3 }, duration: 500 / t, yoyo: true, repeat: -1 });
+
+          s.time.addEvent({ delay: Phaser.Math.Between(1800, 3600), loop: true, callback: () => {
+            s.tweens.add({ targets: [p.eyeL, p.eyeR], scaleY: 0.08, duration: 90, yoyo: true });
+            s.tweens.add({ targets: [p.eyeL, p.eyeR], x: `+=${Phaser.Math.Between(-2,2)}`, duration: 160, yoyo: true });
+          }});
+
+          s.time.addEvent({ delay: Phaser.Math.Between(2100, 4200), loop: true, callback: () => {
+            s.tweens.add({ targets: p.head, x: Phaser.Math.Between(-4, 4), duration: 240, yoyo: true });
+            s.tweens.add({ targets: p.hair, x: Phaser.Math.Between(-2, 2), duration: 240, yoyo: true });
+          }});
+
+          s.time.addEvent({ delay: Phaser.Math.Between(3900, 6200), loop: true, callback: () => this.reaction('gesture') });
+        }
+
+        reaction(type) {
+          const { scene: s, parts: p, model: m } = this;
+          if (type === 'gesture') {
+            s.tweens.add({ targets: p.armR, angle: -28, duration: 220, yoyo: true });
+            s.tweens.add({ targets: p.mouth, scaleX: 1.4, duration: 150, yoyo: true });
+          } else if (type === 'sync') {
+            const halo = s.add.circle(0, -48, 4, m.palette.primary, 0.7).setDepth(this.container.depth + 1);
+            this.container.add(halo);
+            s.tweens.add({ targets: halo, scale: 4, alpha: 0, duration: 420, onComplete: () => halo.destroy() });
+          }
+        }
+
+        statusTicker() {
+          const { scene: s, model: m, parts: p } = this;
+          let idx = 0;
+          s.time.addEvent({ delay: 3400 + Phaser.Math.Between(0, 1400), loop: true, callback: () => {
+            idx = (idx + 1) % m.microcopy.length;
+            p.statusText.setText(m.microcopy[idx]);
+            s.tweens.add({ targets: [p.statusBox, p.statusText], alpha: { from: 0.55, to: 1 }, duration: 300, yoyo: true });
+          }});
+        }
+
+        setMotion(scale, mode) {
+          this.container.setScale(1 + (scale - 1) * 0.05);
+          this.parts.statusBox.setVisible(mode !== 'low');
+          this.parts.statusText.setVisible(mode !== 'low');
+        }
+      }
+
+      function createGame(motion) {
+        const mobile = window.matchMedia('(max-width: 760px)').matches;
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const pixelRatioCap = mobile ? 1.2 : 1.7;
+
+        const game = new Phaser.Game({
+          type: Phaser.AUTO,
+          parent: 'phaser-root',
+          antialias: !mobile,
+          scale: { mode: Phaser.Scale.RESIZE, autoCenter: Phaser.Scale.CENTER_BOTH, width: 1280, height: 720 },
+          fps: { target: 60, smoothStep: true, forceSetTimeOut: mobile },
+          render: { pixelArt: false, powerPreference: 'high-performance', maxTextures: 8, mipmapFilter: 'LINEAR' },
+          resolution: Math.min(window.devicePixelRatio || 1, pixelRatioCap),
+          scene: [OfficeScene]
+        });
+
+        game.events.once('ready', () => {
+          const s = game.scene.getScene('office-v7');
+          s.events.emit('settings:reduced', reduced);
+          s.events.emit('motion:set', reduced ? 'low' : motion);
+        });
+
+        document.addEventListener('visibilitychange', () => { if (document.hidden) game.loop.sleep(); else game.loop.wake(); });
+        return game;
+      }
+
+      function App() {
+        const prefersReduced = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, []);
+        const [motion, setMotion] = useState(prefersReduced ? 'low' : 'normal');
+        const gameRef = useRef(null);
+
+        useEffect(() => {
+          gameRef.current = createGame(motion);
+          return () => { if (gameRef.current) gameRef.current.destroy(true); };
+        }, []);
+
+        useEffect(() => {
+          const g = gameRef.current;
+          if (!g) return;
+          const s = g.scene.getScene('office-v7');
+          if (s) s.events.emit('motion:set', motion);
+        }, [motion]);
+
+        const buttons = ['low', 'normal', 'high'];
+        return React.createElement(React.Fragment, null,
+          React.createElement('div', { className: 'topbar' },
+            React.createElement('div', null,
+              React.createElement('div', { className: 'title' }, 'Mission Control Office · v7 Preview'),
+              React.createElement('div', { className: 'subtitle' }, 'Distinct team identities, expressive animation, parallax, ambient collaboration cues')
+            ),
+            React.createElement('div', { className: 'controls' },
+              React.createElement('span', { className: 'badge' }, `prefers-reduced-motion: ${prefersReduced ? 'on' : 'off'}`),
+              buttons.map((m) => React.createElement('button', { key: m, className: motion === m ? 'active' : '', onClick: () => setMotion(m) }, `motion ${m}`))
+            )
+          ),
+          React.createElement('div', { className: 'stage-wrap' },
+            React.createElement('div', { className: 'stage' }, React.createElement('div', { id: 'phaser-root' }))
+          )
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById('app')).render(React.createElement(App));
+    })();
+  </script>
+</body>
+</html>
