@@ -3,20 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mission Control Dashboard • Day 1</title>
+  <title>Mission Control Dashboard • Day 2</title>
   <style>
-    :root{--bg:#060b1b;--bg2:#101b3f;--card:rgba(19,30,66,.72);--line:rgba(136,167,255,.24);--text:#eef4ff;--muted:#9db3dd;--good:#37d9a9;--warn:#ffbf62;--bad:#ff6f88;--accent:#71b5ff;--accent2:#ae84ff}
-    *{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,system-ui;background:radial-gradient(900px 500px at 0 -10%,rgba(113,181,255,.18),transparent 60%),radial-gradient(900px 500px at 100% -10%,rgba(174,132,255,.18),transparent 60%),linear-gradient(160deg,var(--bg),var(--bg2));color:var(--text)}
-    .wrap{max-width:1240px;margin:auto;padding:16px;display:grid;gap:14px}.glass{background:var(--card);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(10px);box-shadow:0 20px 45px rgba(0,0,0,.35)}
-    .hero{padding:16px}.hero h1{margin:0;font-size:clamp(1.2rem,4vw,2rem)}.muted{color:var(--muted)}.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+    :root{--bg:#070d1d;--bg2:#13234e;--card:rgba(17,29,63,.74);--line:rgba(136,167,255,.26);--text:#eff4ff;--muted:#9eb4de;--good:#35d7a8;--warn:#ffc062;--bad:#ff738f;--accent:#74b7ff;--accent2:#b88cff}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,system-ui;background:radial-gradient(900px 500px at 0 -10%,rgba(116,183,255,.18),transparent 60%),radial-gradient(900px 500px at 100% -10%,rgba(184,140,255,.17),transparent 60%),linear-gradient(160deg,var(--bg),var(--bg2));color:var(--text)}
+    .wrap{max-width:1260px;margin:auto;padding:16px;display:grid;gap:14px}.glass{background:var(--card);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(10px);box-shadow:0 20px 45px rgba(0,0,0,.34)}
+    .hero{padding:14px 16px}.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}.hero h1{margin:0;font-size:clamp(1.22rem,3.8vw,2rem)}.muted{color:var(--muted)}
     .links a{color:var(--text);text-decoration:none;border:1px solid var(--line);padding:8px 10px;border-radius:10px;font-size:.8rem;display:inline-block;margin:2px;background:rgba(255,255,255,.04)}
-    .digest{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;padding:12px}.kpi{padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}.kpi .v{font-size:1.35rem;font-weight:800}
-    .pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:.68rem;border:1px solid var(--line);text-transform:uppercase;font-weight:700;letter-spacing:.04em}.high{color:var(--good)}.medium{color:var(--warn)}.low{color:var(--bad)}
-    .grid{display:grid;grid-template-columns:2fr 1.1fr;gap:12px}.projects{padding:12px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+    .digest{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;padding:12px}.kpi{padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}.kpi .v{font-size:1.3rem;font-weight:800}
+    .pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:.66rem;border:1px solid var(--line);text-transform:uppercase;font-weight:700;letter-spacing:.04em}.high{color:var(--good)}.medium{color:var(--warn)}.low{color:var(--bad)}
+    .mod{padding:12px}.module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.module{padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
+    .bar{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+    .grid{display:grid;grid-template-columns:2fr 1.1fr;gap:12px}.projects{padding:12px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
     .card{display:block;text-decoration:none;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));transition:.2s}.card:hover{transform:translateY(-2px);border-color:var(--accent)}
-    .meter{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.meter>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+    .trend{height:32px;display:flex;align-items:flex-end;gap:3px;margin-top:8px}.trend i{display:block;flex:1;background:linear-gradient(180deg,var(--accent),var(--accent2));border-radius:3px 3px 1px 1px;opacity:.84;min-height:3px}
     .scene{padding:12px}.pixel{font-family:ui-monospace,Consolas,monospace;background:#0a1128;border:1px solid var(--line);border-radius:12px;padding:12px;white-space:pre;line-height:1.1;font-size:.72rem;overflow:auto}
-    .members{display:grid;gap:8px;margin-top:10px}.m{padding:9px;border:1px dashed var(--line);border-radius:10px;font-size:.83rem}
+    .members{display:grid;gap:8px;margin-top:10px}.m{padding:9px;border:1px dashed var(--line);border-radius:10px;font-size:.83rem;background:rgba(255,255,255,.02)}
     @media(max-width:900px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
@@ -34,13 +36,18 @@
 
     <section class="glass digest" id="digest"></section>
 
+    <section class="glass mod">
+      <h3 style="margin:4px 0 10px">High-Priority Modules (first-fold ROI)</h3>
+      <div class="module-grid" id="priority"></div>
+    </section>
+
     <section class="grid">
       <section class="glass projects">
-        <h3 style="margin:4px 0 10px">Projects (click for inner page)</h3>
+        <h3 style="margin:4px 0 10px">Projects (comparable cards + trend)</h3>
         <div class="cards" id="projects"></div>
       </section>
       <section class="glass scene">
-        <h3 style="margin:4px 0 8px">8-bit Team Corner</h3>
+        <h3 style="margin:4px 0 8px">8-bit Team Ops Scene</h3>
         <div class="pixel" id="pixel"></div>
         <div class="members" id="members"></div>
       </section>
@@ -52,19 +59,25 @@
   const res = await fetch('./data/live-metrics.json',{cache:'no-store'}).catch(()=>null);
   const data = res && res.ok ? await res.json() : null;
   if(!data){document.getElementById('stamp').textContent='Live data unavailable. Run: npm run data:refresh';return;}
-  document.getElementById('stamp').textContent=`Generated ${new Date(data.generatedAt).toLocaleString()} • Confidence model: high/medium/low`;
-  document.getElementById('digest').innerHTML = data.digest.map(d=>`<article class='kpi'><div class='muted' style='font-size:.78rem'>${d.title}</div><div class='v'>${d.value}</div><div class='muted' style='font-size:.75rem'>${d.delta}</div><div style='margin-top:7px'><span class='pill ${d.confidence}'>${d.confidence} confidence</span></div></article>`).join('');
-  document.getElementById('projects').innerHTML = data.projects.map(p=>`<a class='card' href='./project.html?id=${encodeURIComponent(p.id)}'><div style='display:flex;justify-content:space-between;gap:8px'><strong>${p.name}</strong><span class='pill ${p.confidence}'>${p.confidence}</span></div><div class='muted' style='font-size:.77rem;margin:4px 0 7px'>${p.path}</div><div class='meter'><i style='width:${Math.max(6,p.progress||0)}%'></i></div><div style='display:flex;justify-content:space-between;font-size:.76rem;margin-top:6px'><span>${p.progress||0}%</span><span class='muted'>${p.health}</span></div></a>`).join('');
 
-  const map = {'focus':'⌁','calm':'~','alert':'!'};
+  document.getElementById('stamp').textContent = `Generated ${new Date(data.generatedAt).toLocaleString()} • Data version ${data.dataVersion} • Confidence labels active`;
+
+  document.getElementById('digest').innerHTML = (data.digest||[]).map(d=>`<article class='kpi'><div class='muted' style='font-size:.77rem'>${d.title}</div><div class='v'>${d.value}</div><div class='muted' style='font-size:.74rem'>${d.delta}</div><div style='display:flex;gap:6px;flex-wrap:wrap;margin-top:7px'><span class='pill ${d.confidence}'>${d.confidence} confidence</span><span class='pill'>${d.freshness||'unknown'} freshness</span></div></article>`).join('');
+
+  document.getElementById('priority').innerHTML = (data.priorityModules||[]).map(m=>`<div class='module'><div style='display:flex;justify-content:space-between;gap:8px'><strong>#${m.rank} ${m.name}</strong><span class='pill ${m.confidence}'>${m.confidence}</span></div><div class='muted' style='font-size:.76rem;margin:5px 0'>${m.note}</div><div style='display:flex;justify-content:space-between;font-size:.74rem'><span>ROI ${m.roiScore}/100</span><span>${m.progress}% progress</span></div><div class='bar' style='margin-top:6px'><i style='width:${Math.max(6,m.progress||0)}%'></i></div><div class='muted' style='font-size:.7rem;margin-top:6px'>Updated ${m.latestUpdate ? new Date(m.latestUpdate).toLocaleString() : 'n/a'}</div></div>`).join('');
+
+  document.getElementById('projects').innerHTML = (data.projects||[]).map(p=>`<a class='card' href='./project.html?id=${encodeURIComponent(p.id)}'><div style='display:flex;justify-content:space-between;gap:8px'><strong>${p.name}</strong><span class='pill ${p.confidence}'>${p.confidence}</span></div><div class='muted' style='font-size:.75rem;margin:3px 0 7px'>${p.path}</div><div style='display:flex;justify-content:space-between;font-size:.74rem'><span>ROI ${p.roiScore||'n/a'}/100</span><span>${p.progress||0}%</span></div><div class='bar' style='margin-top:6px'><i style='width:${Math.max(6,p.progress||0)}%'></i></div><div class='trend'>${(p.trend7d||[0,0,0,0,0,0,0]).map(v=>`<i style='height:${Math.max(4,4+v*6)}px'></i>`).join('')}</div><div class='muted' style='font-size:.7rem'>Health: ${p.health} • Freshness: ${p.freshnessHours ?? 'n/a'}h</div></a>`).join('');
+
   const lines = [
-'┌─────────── Ops Floor ───────────┐',
-'│ [PC-01] [PC-02]  [MEET] [SUP]   │',
-'│    ▒▒      ▒▒      ▓▓     ░░    │',
-'└──────────────────────────────────┘'
+'┌──────────── 8-BIT OPS DECK ────────────┐',
+'│ [CTR]  [BUILD]  [TELEM]  [SUPPORT]     │',
+'│  🕹️      🛠️        📈        💬        │',
+'│ ROI lane lit → top modules at left fold│',
+'└─────────────────────────────────────────┘'
   ];
   document.getElementById('pixel').textContent = lines.join('\n');
-  document.getElementById('members').innerHTML = data.teamScene.members.map(m=>`<div class='m'><strong>${m.name}</strong> (${m.role}) • ${m.zone}<br><span class='muted'>${map[m.mood]||'*'} ${m.status}</span></div>`).join('');
+  const moodMap = {focus:'⌁ focus', calm:'~ calm', alert:'! alert'};
+  document.getElementById('members').innerHTML = (data.teamScene?.members||[]).map(m=>`<div class='m'><strong>${m.avatar||'◉'} ${m.name}</strong> (${m.role}) • ${m.zone}<br><span class='muted'>${moodMap[m.mood]||'*'} • ${m.status}</span></div>`).join('');
 })();
 </script>
 </body>

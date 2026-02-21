@@ -1,30 +1,63 @@
 <!doctype html>
-<html><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/><title>Project Detail</title>
+<html><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/><title>Project Detail • Day 2</title>
 <style>
-:root{--bg:#090f23;--bg2:#18254d;--card:rgba(24,38,83,.72);--line:rgba(136,167,255,.25);--text:#eef4ff;--muted:#9db3dd;--a:#76b8ff;--b:#b289ff}
+:root{--bg:#090f23;--bg2:#18254d;--card:rgba(24,38,83,.72);--line:rgba(136,167,255,.25);--text:#eef4ff;--muted:#9db3dd;--a:#76b8ff;--b:#b289ff;--good:#37d9a9;--warn:#ffbf62;--bad:#ff6f88}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,system-ui;background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--text)}
-.wrap{max-width:980px;margin:auto;padding:15px;display:grid;gap:12px}.glass{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
-a{color:var(--text)}.muted{color:var(--muted)}.bars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.bar{padding:9px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.03)}
+.wrap{max-width:1040px;margin:auto;padding:15px;display:grid;gap:12px}.glass{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+a{color:var(--text)}.muted{color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}.k{padding:9px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.03)}
+.bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}.bar{padding:9px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.03)}
 .spark{height:44px;display:flex;align-items:flex-end;gap:4px}.spark i{display:block;flex:1;background:linear-gradient(180deg,var(--a),var(--b));border-radius:4px 4px 2px 2px;opacity:.8}
-.timeline{display:grid;gap:8px}.step{border:1px solid var(--line);padding:9px;border-radius:10px}.done{border-color:#2cc997}.active{border-color:#ffc56a}
+.timeline{display:grid;gap:8px}.step{border:1px solid var(--line);padding:9px;border-radius:10px}.done{border-color:var(--good)}.active{border-color:var(--warn)}
+.road{display:grid;gap:7px}.phase{display:grid;grid-template-columns:170px 1fr;gap:8px;align-items:center}.meter{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--b))}
+.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:.84rem}th,td{padding:7px 5px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted);font-weight:600}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);font-size:.7rem}.high{color:var(--good)}.medium{color:var(--warn)}.low{color:var(--bad)}
 ul{margin:6px 0 0 18px}
 </style></head>
 <body><main class='wrap'>
 <section class='glass'><a href='./index.html'>← Back</a><h1 id='title' style='margin:.4rem 0'></h1><div class='muted' id='meta'></div></section>
-<section class='glass'><h3 style='margin-top:0'>Real-time style infographics (proxy)</h3><div class='bars' id='stats'></div></section>
-<section class='glass'><h3 style='margin-top:0'>Timeline / Roadmap</h3><div class='timeline' id='tl'></div></section>
+<section class='glass'><h3 style='margin-top:0'>Decision snapshot</h3><div class='kpis' id='kpis'></div></section>
+<section class='glass'><h3 style='margin-top:0'>Real-time style infographics (local proxy)</h3><div class='bars' id='stats'></div></section>
+<section class='glass'><h3 style='margin-top:0'>Timeline / Roadmap</h3><div class='timeline' id='tl'></div><div style='height:10px'></div><div class='road' id='road'></div></section>
+<section class='glass'><h3 style='margin-top:0'>Cross-project comparison lane</h3><div class='table'><table><thead><tr><th>Project</th><th>ROI</th><th>Progress</th><th>Health</th><th>Confidence</th></tr></thead><tbody id='cmp'></tbody></table></div></section>
 <section class='glass'><h3 style='margin-top:0'>Recommended actions</h3><ul id='actions'></ul></section>
+<section class='glass'><h3 style='margin-top:0'>Data provenance + caveats</h3><ul id='prov'></ul></section>
 </main>
 <script>
 (async()=>{
 const id=new URLSearchParams(location.search).get('id');
 const data=await (await fetch('./data/live-metrics.json',{cache:'no-store'})).json();
-const p=(data.projects||[]).find(x=>x.id===id)||data.projects?.[0];
+const projects=(data.projects||[]);
+const p=projects.find(x=>x.id===id)||projects[0];
 if(!p){document.body.innerHTML='No project data. Run npm run data:refresh';return;}
+const roiSorted=[...projects].sort((a,b)=>(b.roiScore||0)-(a.roiScore||0));
+const rank=roiSorted.findIndex(x=>x.id===p.id)+1;
+const avgRoi=Math.round(projects.reduce((s,x)=>s+(x.roiScore||0),0)/Math.max(1,projects.length));
+
 document.getElementById('title').textContent=p.name;
-document.getElementById('meta').textContent=`Path: ${p.path} • Updated: ${p.latestUpdate||'n/a'} • Confidence: ${p.confidence} (${p.confidenceReason})`;
-document.getElementById('stats').innerHTML=(p.stats||[]).map(s=>`<div class='bar'><div class='muted' style='font-size:.76rem'>${s.label}</div><div style='font-size:1.2rem;font-weight:800'>${s.value}</div><div class='spark'>${Array.from({length:8}).map((_,i)=>`<i style='height:${22+((i*9+String(s.value).length*7)%22)}px'></i>`).join('')}</div></div>`).join('');
-document.getElementById('tl').innerHTML=(p.timeline||[]).map(t=>`<div class='step ${t.state}'><strong>${t.label}</strong> <span class='muted'>${t.state}</span></div>`).join('');
+document.getElementById('meta').textContent=`Path: ${p.path} • Updated: ${p.latestUpdate||'n/a'} • Confidence: ${p.confidence} (${p.confidenceReason||'n/a'})`;
+
+document.getElementById('kpis').innerHTML=[
+  ['ROI score',p.roiScore||0],
+  ['Portfolio rank',`${rank}/${projects.length}`],
+  ['Progress',`${p.progress||0}%`],
+  ['Freshness (hrs)',p.freshnessHours==null?'n/a':p.freshnessHours],
+  ['Portfolio avg ROI',avgRoi],
+  ['Data generated',new Date(data.generatedAt).toLocaleString()]
+].map(([k,v])=>`<div class='k'><div class='muted' style='font-size:.75rem'>${k}</div><div style='font-size:1.2rem;font-weight:800'>${v}</div></div>`).join('');
+
+document.getElementById('stats').innerHTML=(p.stats||[]).map((s,idx)=>`<div class='bar'><div class='muted' style='font-size:.76rem'>${s.label}</div><div style='font-size:1.2rem;font-weight:800'>${s.value}</div><div class='spark'>${Array.from({length:8}).map((_,i)=>`<i style='height:${20+((i*7+(idx+1)*11+String(s.value).length*5)%24)}px'></i>`).join('')}</div></div>`).join('');
+
+document.getElementById('tl').innerHTML=(p.timeline||[]).map((t,i)=>`<div class='step ${t.state}'><strong>${i+1}. ${t.label}</strong> <span class='muted'>${t.state}</span></div>`).join('');
+const phasePct={done:100,active:65,queued:20};
+document.getElementById('road').innerHTML=(p.timeline||[]).map(t=>`<div class='phase'><div>${t.label}</div><div class='meter'><i style='width:${phasePct[t.state]||10}%'></i></div></div>`).join('');
+
+document.getElementById('cmp').innerHTML=roiSorted.map(x=>`<tr><td>${x.id===p.id?'<strong>'+x.name+'</strong>':x.name}</td><td>${x.roiScore||0}</td><td>${x.progress||0}%</td><td>${x.health}</td><td><span class='pill ${x.confidence}'>${x.confidence}</span></td></tr>`).join('');
 document.getElementById('actions').innerHTML=(p.actions||[]).map(a=>`<li>${a}</li>`).join('');
+
+const prov=[...(p.dataProvenance||[]),`dataset version: ${data.dataVersion||1}`,`confidence model: ${Object.keys(data.confidenceModel||{}).join('/')}`];
+if(p.freshnessHours!=null) prov.push(`freshness based on filesystem mtime proxy (${p.freshnessHours}h old)`);
+prov.push('Caveat: proxy metrics are directional and may not equal semantic completion.');
+document.getElementById('prov').innerHTML=prov.map(x=>`<li>${x}</li>`).join('');
 })();
 </script></body></html>

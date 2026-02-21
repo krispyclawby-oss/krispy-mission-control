@@ -1,71 +1,111 @@
 {
-  "generatedAt": "2026-02-20T07:02:17.773Z",
-  "dataVersion": 1,
+  "generatedAt": "2026-02-21T07:02:22.031Z",
+  "dataVersion": 2,
   "confidenceModel": {
-    "high": "Directly measured from first-party artifacts or command output.",
-    "medium": "Derived from reliable proxies (filesystem recency / scan summaries).",
-    "low": "Heuristic estimate or inferred trend requiring human confirmation."
+    "high": "Direct command/file evidence (git logs, checklists, service status).",
+    "medium": "Reliable operational proxies (mtime + repo telemetry).",
+    "low": "Heuristic estimate requiring operator verification."
   },
   "digest": [
     {
       "title": "Gateway Runtime",
       "value": "Stopped",
-      "delta": "RPC probe healthy",
+      "delta": "RPC healthy",
       "confidence": "high",
-      "timestamp": "2026-02-20T07:02:17.773Z"
+      "freshness": "live",
+      "timestamp": "2026-02-21T07:02:22.031Z"
     },
     {
-      "title": "Polymarket Backlog",
-      "value": "12 open",
-      "delta": "5/17 closed",
-      "confidence": "high",
-      "timestamp": "2026-02-19T06:02:44.914Z"
-    },
-    {
-      "title": "Active Project Signals",
-      "value": "4/6",
-      "delta": "Projects showing hot/active/stable telemetry",
+      "title": "Top ROI Project",
+      "value": "Mission Control Dashboard (98/100)",
+      "delta": "Prioritize this in first operator pass",
       "confidence": "medium",
-      "timestamp": "2026-02-20T07:02:17.773Z"
+      "freshness": "hourly",
+      "timestamp": "2026-02-21T07:02:21.411Z"
+    },
+    {
+      "title": "Projects Hot/Warm",
+      "value": "4/6",
+      "delta": "Cross-project execution energy",
+      "confidence": "medium",
+      "freshness": "hourly",
+      "timestamp": "2026-02-21T07:02:22.031Z"
     },
     {
       "title": "Gateway Last Task Run",
-      "value": "2/19/2026 9:04:17 PM)",
-      "delta": "Windows Scheduled Task telemetry",
+      "value": "2/21/2026 1:43:16 AM)",
+      "delta": "Scheduled task telemetry",
       "confidence": "high",
-      "timestamp": "2026-02-20T07:02:17.773Z"
+      "freshness": "live",
+      "timestamp": "2026-02-21T07:02:22.031Z"
+    }
+  ],
+  "priorityModules": [
+    {
+      "rank": 1,
+      "id": "mission-control-dashboard",
+      "name": "Mission Control Dashboard",
+      "roiScore": 98,
+      "progress": 85,
+      "confidence": "medium",
+      "latestUpdate": "2026-02-21T07:02:21.411Z",
+      "note": "Close 1 highest ROI blocker first"
+    },
+    {
+      "rank": 2,
+      "id": "polymarket",
+      "name": "Polymarket Bot",
+      "roiScore": 78,
+      "progress": 32,
+      "confidence": "high",
+      "latestUpdate": "2026-02-20T18:05:00.829Z",
+      "note": "Close highest-risk open TODO first"
+    },
+    {
+      "rank": 3,
+      "id": "nightshift",
+      "name": "Nightshift",
+      "roiScore": 54,
+      "progress": 70,
+      "confidence": "low",
+      "latestUpdate": "2026-02-21T06:07:01.624Z",
+      "note": "Close 1 highest ROI blocker first"
     }
   ],
   "teamScene": {
-    "title": "8-bit Ops Corner",
-    "subtitle": "Near-real-time context fed by current project telemetry",
+    "title": "8-bit Ops Deck",
+    "subtitle": "Avatars mapped to active project context below high-priority modules",
     "members": [
       {
         "name": "Boss",
         "role": "Director",
-        "zone": "Meeting Table",
-        "status": "prioritizing gates",
+        "avatar": "🕹️",
+        "zone": "Command Table",
+        "status": "triaging ROI top 3: Mission Control Dashboard, Polymarket Bot, Nightshift",
         "mood": "focus"
       },
       {
         "name": "Maya",
         "role": "Ops Lead",
-        "zone": "PC-01",
-        "status": "runbook sequencing",
-        "mood": "calm"
+        "avatar": "🛠️",
+        "zone": "Build Bay",
+        "status": "driving Mission Control Dashboard quality gate",
+        "mood": "focus"
       },
       {
         "name": "Ravi",
         "role": "Signal Analyst",
-        "zone": "PC-02",
-        "status": "threshold tuning",
-        "mood": "focus"
+        "avatar": "📈",
+        "zone": "Telemetry Wall",
+        "status": "maintaining trend and confidence labels",
+        "mood": "calm"
       },
       {
         "name": "Muse",
-        "role": "Family Support",
+        "role": "Support",
+        "avatar": "💬",
         "zone": "Support Desk",
-        "status": "motivation cadence",
+        "status": "keeping team flow and context continuity",
         "mood": "calm"
       }
     ]
@@ -75,149 +115,206 @@
       "id": "polymarket",
       "name": "Polymarket Bot",
       "path": "C:\\Users\\Administrator\\.openclaw\\workspace-dev\\projects\\polymarket",
-      "latestUpdate": "2026-02-19T06:02:51.104Z",
+      "latestUpdate": "2026-02-20T18:05:00.829Z",
+      "freshnessHours": 13,
       "health": "active",
-      "progress": 29,
+      "progress": 32,
+      "roiScore": 78,
       "confidence": "high",
-      "confidenceReason": "Derived from explicit TODO.md checklist state and STATUS.md timestamp.",
+      "confidenceReason": "Derived from explicit TODO.md checklist state + STATUS.md timestamp.",
+      "trend7d": [
+        2,
+        3,
+        1,
+        4,
+        2,
+        2,
+        3
+      ],
       "timeline": [
         {
           "label": "Market scan",
-          "state": "done"
+          "state": "done",
+          "due": "Complete"
         },
         {
           "label": "Strategy tune",
-          "state": "active"
+          "state": "active",
+          "due": "This week"
         },
         {
-          "label": "Risk check",
-          "state": "queued"
+          "label": "Risk guardrail hardening",
+          "state": "queued",
+          "due": "Next gate"
         },
         {
-          "label": "Execution",
-          "state": "queued"
+          "label": "Execution window",
+          "state": "queued",
+          "due": "After guardrails"
         }
       ],
       "stats": [
         {
-          "label": "TODO open",
-          "value": "12"
+          "label": "TODO Open",
+          "value": "13"
         },
         {
-          "label": "TODO done",
-          "value": "5"
+          "label": "TODO Done",
+          "value": "6"
         },
         {
-          "label": "Checklist total",
-          "value": "17"
+          "label": "Checklist Total",
+          "value": "19"
+        },
+        {
+          "label": "ROI Priority",
+          "value": "78/100"
         }
       ],
       "actions": [
-        "Close highest-risk open TODO items",
-        "Update STATUS with latest trading constraints",
-        "Re-run dry-run strategy checks"
+        "Close highest-risk open TODO first",
+        "Update STATUS.md with current risk envelope",
+        "Re-run dry-run checks before activation"
       ]
     },
     {
       "id": "mission-control-dashboard",
       "name": "Mission Control Dashboard",
       "path": "C:\\Users\\Administrator\\.openclaw\\workspace\\mission-control-dashboard",
-      "latestUpdate": "2026-02-20T07:02:10.953Z",
+      "latestUpdate": "2026-02-21T07:02:21.411Z",
       "fileSignals": {
-        "filesScanned": 13,
+        "filesScanned": 15,
         "scanCapped": false
       },
+      "freshnessHours": 0,
       "health": "hot",
-      "progress": 72,
+      "progress": 85,
+      "roiScore": 98,
       "confidence": "medium",
-      "confidenceReason": "Based on filesystem recency proxy (mtime), not semantic task completion.",
+      "confidenceReason": "Built from git activity + filesystem recency proxies.",
+      "trend7d": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        11,
+        1
+      ],
       "timeline": [
         {
-          "label": "Discovery",
-          "state": "done"
+          "label": "Scope lock",
+          "state": "done",
+          "due": "In progress week"
         },
         {
-          "label": "Implementation",
-          "state": "active"
+          "label": "Build sprint",
+          "state": "active",
+          "due": "Next 24-48h"
         },
         {
-          "label": "Validation",
-          "state": "active"
+          "label": "QA + operator review",
+          "state": "active",
+          "due": "Next 48h"
         },
         {
-          "label": "Release",
-          "state": "queued"
+          "label": "Deploy / handoff",
+          "state": "queued",
+          "due": "After QA gate"
         }
       ],
       "stats": [
         {
-          "label": "Progress proxy",
-          "value": "72%"
+          "label": "ROI Priority",
+          "value": "98/100"
         },
         {
-          "label": "Freshness",
-          "value": "hot"
+          "label": "7d Commits",
+          "value": "12"
         },
         {
-          "label": "Files scanned",
-          "value": "13"
+          "label": "Contributors (7d)",
+          "value": "1"
+        },
+        {
+          "label": "TODO Open",
+          "value": "0"
         }
       ],
       "actions": [
-        "Review latest changed files",
-        "Confirm blockers and owner",
-        "Run smoke validation"
+        "Close 1 highest ROI blocker first",
+        "Ship a visible operator-facing quality improvement",
+        "Attach freshness + confidence labels to new metrics"
       ]
     },
     {
       "id": "nightshift",
       "name": "Nightshift",
       "path": "C:\\Users\\Administrator\\.openclaw\\workspace\\nightshift",
-      "latestUpdate": "2026-02-20T06:07:01.199Z",
+      "latestUpdate": "2026-02-21T06:07:01.624Z",
       "fileSignals": {
-        "filesScanned": 191,
+        "filesScanned": 216,
         "scanCapped": false
       },
+      "freshnessHours": 0.9,
       "health": "hot",
-      "progress": 72,
-      "confidence": "medium",
-      "confidenceReason": "Based on filesystem recency proxy (mtime), not semantic task completion.",
+      "progress": 70,
+      "roiScore": 54,
+      "confidence": "low",
+      "confidenceReason": "Filesystem recency heuristic only; validate manually.",
+      "trend7d": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "timeline": [
         {
-          "label": "Discovery",
-          "state": "done"
+          "label": "Scope lock",
+          "state": "done",
+          "due": "In progress week"
         },
         {
-          "label": "Implementation",
-          "state": "active"
+          "label": "Build sprint",
+          "state": "active",
+          "due": "Next 24-48h"
         },
         {
-          "label": "Validation",
-          "state": "active"
+          "label": "QA + operator review",
+          "state": "queued",
+          "due": "Next 48h"
         },
         {
-          "label": "Release",
-          "state": "queued"
+          "label": "Deploy / handoff",
+          "state": "queued",
+          "due": "After QA gate"
         }
       ],
       "stats": [
         {
-          "label": "Progress proxy",
-          "value": "72%"
+          "label": "ROI Priority",
+          "value": "54/100"
         },
         {
-          "label": "Freshness",
-          "value": "hot"
+          "label": "7d Commits",
+          "value": "0"
         },
         {
-          "label": "Files scanned",
-          "value": "191"
+          "label": "Contributors (7d)",
+          "value": "0"
+        },
+        {
+          "label": "TODO Open",
+          "value": "0"
         }
       ],
       "actions": [
-        "Review latest changed files",
-        "Confirm blockers and owner",
-        "Run smoke validation"
+        "Close 1 highest ROI blocker first",
+        "Ship a visible operator-facing quality improvement",
+        "Attach freshness + confidence labels to new metrics"
       ]
     },
     {
@@ -229,97 +326,135 @@
         "filesScanned": 1,
         "scanCapped": false
       },
+      "freshnessHours": 73.7,
       "health": "cold",
-      "progress": 36,
+      "progress": 34,
+      "roiScore": 21,
       "confidence": "low",
-      "confidenceReason": "Based on filesystem recency proxy (mtime), not semantic task completion.",
+      "confidenceReason": "Filesystem recency heuristic only; validate manually.",
+      "trend7d": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "timeline": [
         {
-          "label": "Discovery",
-          "state": "done"
+          "label": "Scope lock",
+          "state": "done",
+          "due": "In progress week"
         },
         {
-          "label": "Implementation",
-          "state": "queued"
+          "label": "Build sprint",
+          "state": "queued",
+          "due": "Next 24-48h"
         },
         {
-          "label": "Validation",
-          "state": "queued"
+          "label": "QA + operator review",
+          "state": "queued",
+          "due": "Next 48h"
         },
         {
-          "label": "Release",
-          "state": "queued"
+          "label": "Deploy / handoff",
+          "state": "queued",
+          "due": "After QA gate"
         }
       ],
       "stats": [
         {
-          "label": "Progress proxy",
-          "value": "36%"
+          "label": "ROI Priority",
+          "value": "21/100"
         },
         {
-          "label": "Freshness",
-          "value": "cold"
+          "label": "7d Commits",
+          "value": "0"
         },
         {
-          "label": "Files scanned",
-          "value": "1"
+          "label": "Contributors (7d)",
+          "value": "0"
+        },
+        {
+          "label": "TODO Open",
+          "value": "0"
         }
       ],
       "actions": [
-        "Review latest changed files",
-        "Confirm blockers and owner",
-        "Run smoke validation"
+        "Close 1 highest ROI blocker first",
+        "Ship a visible operator-facing quality improvement",
+        "Attach freshness + confidence labels to new metrics"
       ]
     },
     {
       "id": "overnight_ops",
       "name": "Overnight Ops",
       "path": "C:\\Users\\Administrator\\.openclaw\\workspace\\overnight_ops",
-      "latestUpdate": "2026-02-20T07:00:05.295Z",
+      "latestUpdate": "2026-02-21T06:58:56.867Z",
       "fileSignals": {
-        "filesScanned": 304,
+        "filesScanned": 434,
         "scanCapped": false
       },
+      "freshnessHours": 0.1,
       "health": "hot",
-      "progress": 72,
-      "confidence": "medium",
-      "confidenceReason": "Based on filesystem recency proxy (mtime), not semantic task completion.",
+      "progress": 70,
+      "roiScore": 54,
+      "confidence": "low",
+      "confidenceReason": "Filesystem recency heuristic only; validate manually.",
+      "trend7d": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "timeline": [
         {
-          "label": "Discovery",
-          "state": "done"
+          "label": "Scope lock",
+          "state": "done",
+          "due": "In progress week"
         },
         {
-          "label": "Implementation",
-          "state": "active"
+          "label": "Build sprint",
+          "state": "active",
+          "due": "Next 24-48h"
         },
         {
-          "label": "Validation",
-          "state": "active"
+          "label": "QA + operator review",
+          "state": "queued",
+          "due": "Next 48h"
         },
         {
-          "label": "Release",
-          "state": "queued"
+          "label": "Deploy / handoff",
+          "state": "queued",
+          "due": "After QA gate"
         }
       ],
       "stats": [
         {
-          "label": "Progress proxy",
-          "value": "72%"
+          "label": "ROI Priority",
+          "value": "54/100"
         },
         {
-          "label": "Freshness",
-          "value": "hot"
+          "label": "7d Commits",
+          "value": "0"
         },
         {
-          "label": "Files scanned",
-          "value": "304"
+          "label": "Contributors (7d)",
+          "value": "0"
+        },
+        {
+          "label": "TODO Open",
+          "value": "73"
         }
       ],
       "actions": [
-        "Review latest changed files",
-        "Confirm blockers and owner",
-        "Run smoke validation"
+        "Close 1 highest ROI blocker first",
+        "Ship a visible operator-facing quality improvement",
+        "Attach freshness + confidence labels to new metrics"
       ]
     },
     {
@@ -331,46 +466,65 @@
         "filesScanned": 2,
         "scanCapped": false
       },
+      "freshnessHours": 224.6,
       "health": "cold",
-      "progress": 36,
+      "progress": 34,
+      "roiScore": 21,
       "confidence": "low",
-      "confidenceReason": "Based on filesystem recency proxy (mtime), not semantic task completion.",
+      "confidenceReason": "Filesystem recency heuristic only; validate manually.",
+      "trend7d": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "timeline": [
         {
-          "label": "Discovery",
-          "state": "done"
+          "label": "Scope lock",
+          "state": "done",
+          "due": "In progress week"
         },
         {
-          "label": "Implementation",
-          "state": "queued"
+          "label": "Build sprint",
+          "state": "queued",
+          "due": "Next 24-48h"
         },
         {
-          "label": "Validation",
-          "state": "queued"
+          "label": "QA + operator review",
+          "state": "queued",
+          "due": "Next 48h"
         },
         {
-          "label": "Release",
-          "state": "queued"
+          "label": "Deploy / handoff",
+          "state": "queued",
+          "due": "After QA gate"
         }
       ],
       "stats": [
         {
-          "label": "Progress proxy",
-          "value": "36%"
+          "label": "ROI Priority",
+          "value": "21/100"
         },
         {
-          "label": "Freshness",
-          "value": "cold"
+          "label": "7d Commits",
+          "value": "0"
         },
         {
-          "label": "Files scanned",
-          "value": "2"
+          "label": "Contributors (7d)",
+          "value": "0"
+        },
+        {
+          "label": "TODO Open",
+          "value": "0"
         }
       ],
       "actions": [
-        "Review latest changed files",
-        "Confirm blockers and owner",
-        "Run smoke validation"
+        "Close 1 highest ROI blocker first",
+        "Ship a visible operator-facing quality improvement",
+        "Attach freshness + confidence labels to new metrics"
       ]
     }
   ]
