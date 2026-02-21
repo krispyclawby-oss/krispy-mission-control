@@ -52,6 +52,16 @@
         <div class="members" id="members"></div>
       </section>
     </section>
+
+    <section class="glass mod">
+      <h3 style="margin:4px 0 10px">Cross-project comparison lane</h3>
+      <div style="overflow:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:.8rem">
+          <thead><tr><th style="text-align:left;padding:6px;border-bottom:1px solid var(--line)">Project</th><th style="text-align:left;padding:6px;border-bottom:1px solid var(--line)">ROI</th><th style="text-align:left;padding:6px;border-bottom:1px solid var(--line)">Progress</th><th style="text-align:left;padding:6px;border-bottom:1px solid var(--line)">Health</th><th style="text-align:left;padding:6px;border-bottom:1px solid var(--line)">Confidence</th></tr></thead>
+          <tbody id="compare"></tbody>
+        </table>
+      </div>
+    </section>
   </main>
 
 <script>
@@ -67,6 +77,11 @@
   document.getElementById('priority').innerHTML = (data.priorityModules||[]).map(m=>`<div class='module'><div style='display:flex;justify-content:space-between;gap:8px'><strong>#${m.rank} ${m.name}</strong><span class='pill ${m.confidence}'>${m.confidence}</span></div><div class='muted' style='font-size:.76rem;margin:5px 0'>${m.note}</div><div style='display:flex;justify-content:space-between;font-size:.74rem'><span>ROI ${m.roiScore}/100</span><span>${m.progress}% progress</span></div><div class='bar' style='margin-top:6px'><i style='width:${Math.max(6,m.progress||0)}%'></i></div><div class='muted' style='font-size:.7rem;margin-top:6px'>Updated ${m.latestUpdate ? new Date(m.latestUpdate).toLocaleString() : 'n/a'}</div></div>`).join('');
 
   document.getElementById('projects').innerHTML = (data.projects||[]).map(p=>`<a class='card' href='./project.html?id=${encodeURIComponent(p.id)}'><div style='display:flex;justify-content:space-between;gap:8px'><strong>${p.name}</strong><span class='pill ${p.confidence}'>${p.confidence}</span></div><div class='muted' style='font-size:.75rem;margin:3px 0 7px'>${p.path}</div><div style='display:flex;justify-content:space-between;font-size:.74rem'><span>ROI ${p.roiScore||'n/a'}/100</span><span>${p.progress||0}%</span></div><div class='bar' style='margin-top:6px'><i style='width:${Math.max(6,p.progress||0)}%'></i></div><div class='trend'>${(p.trend7d||[0,0,0,0,0,0,0]).map(v=>`<i style='height:${Math.max(4,4+v*6)}px'></i>`).join('')}</div><div class='muted' style='font-size:.7rem'>Health: ${p.health} • Freshness: ${p.freshnessHours ?? 'n/a'}h</div></a>`).join('');
+
+  document.getElementById('compare').innerHTML = (data.projects||[])
+    .slice()
+    .sort((a,b)=>(b.roiScore||0)-(a.roiScore||0))
+    .map(p=>`<tr><td style='padding:6px;border-bottom:1px solid var(--line)'><a href='./project.html?id=${encodeURIComponent(p.id)}' style='color:var(--text)'>${p.name}</a></td><td style='padding:6px;border-bottom:1px solid var(--line)'>${p.roiScore||0}</td><td style='padding:6px;border-bottom:1px solid var(--line)'>${p.progress||0}%</td><td style='padding:6px;border-bottom:1px solid var(--line)'>${p.health}</td><td style='padding:6px;border-bottom:1px solid var(--line)'><span class='pill ${p.confidence}'>${p.confidence}</span></td></tr>`).join('');
 
   const lines = [
 '┌──────────── 8-BIT OPS DECK ────────────┐',

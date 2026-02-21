@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-21T07:02:22.031Z",
+  "generatedAt": "2026-02-21T07:03:24.383Z",
   "dataVersion": 2,
   "confidenceModel": {
     "high": "Direct command/file evidence (git logs, checklists, service status).",
@@ -13,15 +13,15 @@
       "delta": "RPC healthy",
       "confidence": "high",
       "freshness": "live",
-      "timestamp": "2026-02-21T07:02:22.031Z"
+      "timestamp": "2026-02-21T07:03:24.383Z"
     },
     {
       "title": "Top ROI Project",
-      "value": "Mission Control Dashboard (98/100)",
+      "value": "Mission Control Dashboard (99/100)",
       "delta": "Prioritize this in first operator pass",
       "confidence": "medium",
       "freshness": "hourly",
-      "timestamp": "2026-02-21T07:02:21.411Z"
+      "timestamp": "2026-02-21T07:03:16.782Z"
     },
     {
       "title": "Projects Hot/Warm",
@@ -29,7 +29,7 @@
       "delta": "Cross-project execution energy",
       "confidence": "medium",
       "freshness": "hourly",
-      "timestamp": "2026-02-21T07:02:22.031Z"
+      "timestamp": "2026-02-21T07:03:24.383Z"
     },
     {
       "title": "Gateway Last Task Run",
@@ -37,7 +37,7 @@
       "delta": "Scheduled task telemetry",
       "confidence": "high",
       "freshness": "live",
-      "timestamp": "2026-02-21T07:02:22.031Z"
+      "timestamp": "2026-02-21T07:03:24.383Z"
     }
   ],
   "priorityModules": [
@@ -45,10 +45,10 @@
       "rank": 1,
       "id": "mission-control-dashboard",
       "name": "Mission Control Dashboard",
-      "roiScore": 98,
+      "roiScore": 99,
       "progress": 85,
       "confidence": "medium",
-      "latestUpdate": "2026-02-21T07:02:21.411Z",
+      "latestUpdate": "2026-02-21T07:03:16.782Z",
       "note": "Close 1 highest ROI blocker first"
     },
     {
@@ -181,7 +181,7 @@
       "id": "mission-control-dashboard",
       "name": "Mission Control Dashboard",
       "path": "C:\\Users\\Administrator\\.openclaw\\workspace\\mission-control-dashboard",
-      "latestUpdate": "2026-02-21T07:02:21.411Z",
+      "latestUpdate": "2026-02-21T07:03:16.782Z",
       "fileSignals": {
         "filesScanned": 15,
         "scanCapped": false
@@ -189,7 +189,7 @@
       "freshnessHours": 0,
       "health": "hot",
       "progress": 85,
-      "roiScore": 98,
+      "roiScore": 99,
       "confidence": "medium",
       "confidenceReason": "Built from git activity + filesystem recency proxies.",
       "trend7d": [
@@ -198,7 +198,7 @@
         0,
         0,
         0,
-        11,
+        12,
         1
       ],
       "timeline": [
@@ -226,11 +226,11 @@
       "stats": [
         {
           "label": "ROI Priority",
-          "value": "98/100"
+          "value": "99/100"
         },
         {
           "label": "7d Commits",
-          "value": "12"
+          "value": "13"
         },
         {
           "label": "Contributors (7d)",

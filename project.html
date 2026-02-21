@@ -22,6 +22,7 @@ ul{margin:6px 0 0 18px}
 <section class='glass'><h3 style='margin-top:0'>Cross-project comparison lane</h3><div class='table'><table><thead><tr><th>Project</th><th>ROI</th><th>Progress</th><th>Health</th><th>Confidence</th></tr></thead><tbody id='cmp'></tbody></table></div></section>
 <section class='glass'><h3 style='margin-top:0'>Recommended actions</h3><ul id='actions'></ul></section>
 <section class='glass'><h3 style='margin-top:0'>Data provenance + caveats</h3><ul id='prov'></ul></section>
+<section class='glass'><h3 style='margin-top:0'>Confidence legend</h3><ul id='legend'></ul></section>
 </main>
 <script>
 (async()=>{
@@ -59,5 +60,7 @@ const prov=[...(p.dataProvenance||[]),`dataset version: ${data.dataVersion||1}`,
 if(p.freshnessHours!=null) prov.push(`freshness based on filesystem mtime proxy (${p.freshnessHours}h old)`);
 prov.push('Caveat: proxy metrics are directional and may not equal semantic completion.');
 document.getElementById('prov').innerHTML=prov.map(x=>`<li>${x}</li>`).join('');
+const legend=data.confidenceModel||{};
+document.getElementById('legend').innerHTML=Object.entries(legend).map(([k,v])=>`<li><span class='pill ${k}'>${k}</span> ${v}</li>`).join('');
 })();
 </script></body></html>
